@@ -1,0 +1,14 @@
+{
+  "name": "classicborne-server-protocol",
+  "version": "0.0.0",
+  "description": "Minecraft classic server protocol",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "smart-buffer": "^4.2.0"
+  }
+}
