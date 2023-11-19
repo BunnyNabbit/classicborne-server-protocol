@@ -39,12 +39,12 @@ function tcpPacketHandler(socket, data) {
 			socket.client.server.emit("clientConnected", socket.client, {
 				username, key
 			})
-			break;
+			break
 		case 0x0d:
 			socket.buffer.readUInt8()
 			const message = readString(socket.buffer)
 			socket.client.emit("message", message)
-			break;
+			break
 	}
 	socket.buffer.readOffset = size
 	socket.buffer = SmartBuffer.fromBuffer(socket.buffer.readBuffer(socket.buffer.remaining()))
