@@ -10,7 +10,14 @@ const nbt = require('nbt')
 let level = null
 nbt.parse(fs.readFileSync('./reallygreat.cw'), function (error, data) {
 	if (error) throw error
-	level = Buffer.from(data.value.BlockArray.value)
+	level = {
+		blockTypes: Buffer.from(data.value.BlockArray.value),
+		bounds: {
+			x: data.value.X.value,
+			y: data.value.Y.value,
+			z: data.value.Z.value,
+		}
+	}
 })
 
 server.on("clientConnected", (client, authInfo) => {
@@ -18,7 +25,7 @@ server.on("clientConnected", (client, authInfo) => {
 	setTimeout(() => {
 		client.message("Welcome to Really Great!")
 		client.message("You've been here 1 times!")
-		client.loadLevel(level)
+		client.loadLevel(level.blockTypes, level.bounds.x, level.bounds.y, level.bounds.z)
 		client.configureSpawn(0, authInfo.username)
 		setTimeout(() => { // begin troll
 			setTimeout(() => {

@@ -69,23 +69,25 @@ class Client extends EventEmitter {
 	loadLevel(data, x, y, z) {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
-		// TODO: This STUPID. doesn't chunk the compressed payload.
+
 		let compressedPayloadBuffer = new SmartBuffer()
-		compressedPayloadBuffer.writeInt32BE(64*64*64)
+		compressedPayloadBuffer.writeInt32BE(x * y * z)
 		compressedPayloadBuffer.writeBuffer(data)
-		compressedPayloadBuffer = gzipSync(compressedPayloadBuffer.toBuffer())
-		const dataChunkBuffer = new SmartBuffer({ size: 1028 }).writeUInt8(0x03)
-		dataChunkBuffer.writeUInt16BE(compressedPayloadBuffer.length + 4)
-		dataChunkBuffer.writeBuffer(compressedPayloadBuffer)
-		dataChunkBuffer.writeBuffer(Buffer.alloc(1027 - dataChunkBuffer.writeOffset))
-		dataChunkBuffer.writeUInt8(99)
-		console.log(dataChunkBuffer.length)
-		this.socket.write(dataChunkBuffer.toBuffer())
+		compressedPayloadBuffer = SmartBuffer.fromBuffer(gzipSync(compressedPayloadBuffer.toBuffer()))
+		while (compressedPayloadBuffer.remaining()) {
+			const remaining = compressedPayloadBuffer.remaining()
+			const dataChunkBuffer = new SmartBuffer({ size: 1028 }).writeUInt8(0x03)
+			dataChunkBuffer.writeUInt16BE(Math.min(remaining, 1024))
+			dataChunkBuffer.writeBuffer(compressedPayloadBuffer.readBuffer(Math.min(remaining, 1024)))
+			dataChunkBuffer.writeBuffer(Buffer.alloc(1024 - Math.min(remaining, 1024)))
+			dataChunkBuffer.writeUInt8((remaining / compressedPayloadBuffer.length) * 255) // Progress
+			this.socket.write(dataChunkBuffer.toBuffer())
+		}
 
 		const finalizeBuffer = new SmartBuffer({ size: 7 }).writeUInt8(0x04)
-		finalizeBuffer.writeInt16BE(64)
-		finalizeBuffer.writeInt16BE(64)
-		finalizeBuffer.writeInt16BE(64)
+		finalizeBuffer.writeInt16BE(x)
+		finalizeBuffer.writeInt16BE(y)
+		finalizeBuffer.writeInt16BE(z)
 		this.socket.write(finalizeBuffer.toBuffer())
 	}
 	disconnect(message) {
