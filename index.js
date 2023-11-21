@@ -1,6 +1,7 @@
 const net = require("net")
 const SmartBuffer = require("smart-buffer").SmartBuffer
 const EventEmitter = require("events").EventEmitter
+const utils = require("./utils.js")
 
 const knownPacketSizes = {
 	0x00: 131,
@@ -9,7 +10,6 @@ const knownPacketSizes = {
 	0x05: 9
 }
 const maxBuffer = 5000
-const gzip = require("zlib").gzip
 function readString(buffer) {
 	return buffer.readString(64, "ascii").trim()
 }
@@ -79,21 +79,13 @@ class Client extends EventEmitter {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
 
-		let compressedPayloadBuffer = new Promise(resolve => {
+		let compressedPayloadBuffer = new Promise(async(resolve) => {
 			let compressedPayloadBuffer = null
 			if (processed) {
 				compressedPayloadBuffer = SmartBuffer.fromBuffer(data)
 				resolve(compressedPayloadBuffer)
 			} else {
-				compressedPayloadBuffer = new SmartBuffer()
-				compressedPayloadBuffer.writeInt32BE(x * y * z)
-				compressedPayloadBuffer.writeBuffer(data)
-				gzip(compressedPayloadBuffer.toBuffer(), (err, result) => {
-					if (err) throw err
-					console.log(result)
-					compressedPayloadBuffer = SmartBuffer.fromBuffer(result)
-					resolve(compressedPayloadBuffer)
-				})
+				resolve(SmartBuffer.fromBuffer(await utils.processLevel(data, x, y, z)))
 			}
 		})
 		compressedPayloadBuffer = await compressedPayloadBuffer
