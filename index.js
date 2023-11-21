@@ -9,7 +9,7 @@ const knownPacketSizes = {
 	0x05: 9
 }
 const maxBuffer = 5000
-const gzipSync = require("zlib").gzipSync
+const gzip = require("zlib").gzip
 function readString(buffer) {
 	return buffer.readString(64, "ascii").trim()
 }
@@ -75,14 +75,30 @@ class Client extends EventEmitter {
 			writeContinueAdornment = true
 		}
 	}
-	loadLevel(data, x, y, z) {
+	async loadLevel(data, x, y, z, processed = false, callback) { // Unprocessed data means the data is just an uncompressed buffer of block types with the volume count missing.
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
 
-		let compressedPayloadBuffer = new SmartBuffer()
-		compressedPayloadBuffer.writeInt32BE(x * y * z)
-		compressedPayloadBuffer.writeBuffer(data)
-		compressedPayloadBuffer = SmartBuffer.fromBuffer(gzipSync(compressedPayloadBuffer.toBuffer()))
+		let compressedPayloadBuffer = new Promise(resolve => {
+			let compressedPayloadBuffer = null
+			if (processed) {
+				compressedPayloadBuffer = SmartBuffer.fromBuffer(data)
+				resolve(compressedPayloadBuffer)
+			} else {
+				compressedPayloadBuffer = new SmartBuffer()
+				compressedPayloadBuffer.writeInt32BE(x * y * z)
+				compressedPayloadBuffer.writeBuffer(data)
+				gzip(compressedPayloadBuffer.toBuffer(), (err, result) => {
+					if (err) throw err
+					console.log(result)
+					compressedPayloadBuffer = SmartBuffer.fromBuffer(result)
+					resolve(compressedPayloadBuffer)
+				})
+			}
+		})
+		compressedPayloadBuffer = await compressedPayloadBuffer
+		console.log(compressedPayloadBuffer)
+
 		while (compressedPayloadBuffer.remaining()) {
 			const remaining = compressedPayloadBuffer.remaining()
 			const dataChunkBuffer = new SmartBuffer({ size: 1028 }).writeUInt8(0x03)
@@ -98,6 +114,7 @@ class Client extends EventEmitter {
 		finalizeBuffer.writeInt16BE(y)
 		finalizeBuffer.writeInt16BE(z)
 		this.socket.write(finalizeBuffer.toBuffer())
+		if (callback) callback()
 	}
 	disconnect(message) {
 		const buffer = new SmartBuffer({ size: 65 }).writeUInt8(0x0e).writeString(message, "ascii")
