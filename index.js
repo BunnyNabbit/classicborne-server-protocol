@@ -61,10 +61,19 @@ class Client extends EventEmitter {
 		this.socket = socket
 		this.server = server
 	}
-	message(message) {
-		const buffer = new SmartBuffer({ size: 66 }).writeUInt8(0x0d).writeInt8(-1).writeString(message, "ascii")
-		buffer.writeString(" ".repeat(66 - buffer.writeOffset))
-		this.socket.write(buffer.toBuffer())
+	message(message, messageType = -1, continueAdornment = ">") {
+		const asciiBuffer = SmartBuffer.fromBuffer(Buffer.from(message, "ascii"))
+		const continueAsciiBuffer = Buffer.from(continueAdornment, "ascii")
+		if (continueAsciiBuffer.length > 63) throw new Error("Continue adornment must not be over 63 characters long.")
+		let writeContinueAdornment = false
+		while (asciiBuffer.remaining()) {
+			const buffer = new SmartBuffer({ size: 66 }).writeUInt8(0x0d).writeInt8(messageType)
+			if (writeContinueAdornment) buffer.writeBuffer(continueAsciiBuffer)
+			buffer.writeBuffer(asciiBuffer.readBuffer(66 - buffer.writeOffset))
+			buffer.writeString(" ".repeat(66 - buffer.writeOffset)) // padding
+			this.socket.write(buffer.toBuffer())
+			writeContinueAdornment = true
+		}
 	}
 	loadLevel(data, x, y, z) {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
