@@ -23,8 +23,8 @@ nbt.parse(fs.readFileSync('./reallygreat.cw'), function (error, data) {
 server.on("clientConnected", (client, authInfo) => {
 	console.log("Client connected! Hello " + authInfo.username + ".")
 	setTimeout(() => {
-		client.message("Welcome to Really Great!")
-		client.message("You've been here 1 times!")
+		client.message("&aWelcome to Really Great!", 0)
+		client.message("&aYou've been here 1 times!", 0)
 		client.loadLevel(level.blockTypes, level.bounds.x, level.bounds.y, level.bounds.z)
 		client.configureSpawn(0, authInfo.username)
 		setTimeout(() => { // begin troll
@@ -38,13 +38,13 @@ server.on("clientConnected", (client, authInfo) => {
 		client.message(`${authInfo.username}: ` + message, 0)
 		for (let i = 0; i < 32; i++) {
 			setTimeout(() => {
-				client.message(`${playerSpamNames[i % 4]}: gimp`)
+				client.message(`${playerSpamNames[i % 4]}: gimp`, 0)
 			}, 400 * i)
 		}
 		setTimeout(() => {
 			for (let i = 0; i < 64; i++) {
 				setTimeout(() => {
-					client.message(`${playerSpamNames[i % 4]}: gimp`)
+					client.message(`${playerSpamNames[i % 4]}: gimp`, 0)
 				}, 30 * i)
 			}
 		}, 3000)
