@@ -22,6 +22,7 @@ nbt.parse(fs.readFileSync('./reallygreat.cw'), function (error, data) {
 
 server.on("clientConnected", (client, authInfo) => {
 	console.log("Client connected! Hello " + authInfo.username + ".")
+	client.serverIdentification("really great", "insert gimp here", 0x00)
 	setTimeout(() => {
 		client.message("&aWelcome to Really Great!", 0)
 		client.message("&aYou've been here 1 times!", 0)

@@ -125,6 +125,13 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(0)
 		this.socket.write(buffer.toBuffer())
 	}
+	serverIdentification(serverName, motd, userType) {
+		const buffer = new SmartBuffer({ size: 131 }).writeUInt8(0x00).writeUInt8(0x07)
+		buffer.writeBuffer(padString(serverName))
+		buffer.writeBuffer(padString(motd))
+		buffer.writeUInt8(userType)
+		this.socket.write(buffer.toBuffer())
+	}
 }
 
 return module.exports = class Server extends EventEmitter {
