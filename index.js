@@ -3,7 +3,7 @@ const SmartBuffer = require("smart-buffer").SmartBuffer
 const EventEmitter = require("events").EventEmitter
 const utils = require("./utils.js")
 
-const knownPacketSizes = {
+const defaultPacketSizes = {
 	0x00: 131,
 	0x0d: 66,
 	0x08: 10,
@@ -18,7 +18,7 @@ function tcpPacketHandler(socket, data) {
 	socket.buffer.readOffset = 0
 	const length = socket.buffer.remaining()
 	const type = socket.buffer.readUInt8()
-	const size = knownPacketSizes[type]
+	const size = socket.client.packetSizes[type]
 	if (!size || length < size) {
 		console.log("not enough", { size, bufferLength: length, type })
 		if (socket.buffer.remaining() > maxBuffer) return socket.destroy()
@@ -60,6 +60,7 @@ class Client extends EventEmitter {
 		super()
 		this.socket = socket
 		this.server = server
+		this.packetSizes = JSON.parse(JSON.stringify(defaultPacketSizes))
 	}
 	message(message, messageType = -1, continueAdornment = ">") {
 		const asciiBuffer = SmartBuffer.fromBuffer(Buffer.from(message, "ascii"))
