@@ -80,7 +80,7 @@ class Client extends EventEmitter {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
 
-		let compressedPayloadBuffer = new Promise(async(resolve) => {
+		let compressedPayloadBuffer = new Promise(async (resolve) => {
 			let compressedPayloadBuffer = null
 			if (processed) {
 				compressedPayloadBuffer = SmartBuffer.fromBuffer(data)
@@ -130,6 +130,14 @@ class Client extends EventEmitter {
 		buffer.writeBuffer(padString(serverName))
 		buffer.writeBuffer(padString(motd))
 		buffer.writeUInt8(userType)
+		this.socket.write(buffer.toBuffer())
+	}
+	setBlock(type, x, y, z) {
+		const buffer = new SmartBuffer({ size: 8 }).writeUInt8(0x06)
+		buffer.writeUInt16BE(x)
+		buffer.writeUInt16BE(y)
+		buffer.writeUInt16BE(z)
+		buffer.writeUInt8(type)
 		this.socket.write(buffer.toBuffer())
 	}
 }
