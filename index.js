@@ -155,5 +155,6 @@ return module.exports = class Server extends EventEmitter {
 			socket.once('close', () => {
 			})
 		})
+		this.utils = utils
 	}
 }
