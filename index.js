@@ -90,7 +90,6 @@ class Client extends EventEmitter {
 			}
 		})
 		compressedPayloadBuffer = await compressedPayloadBuffer
-		console.log(compressedPayloadBuffer)
 
 		while (compressedPayloadBuffer.remaining()) {
 			const remaining = compressedPayloadBuffer.remaining()
@@ -153,8 +152,6 @@ return module.exports = class Server extends EventEmitter {
 			socket.authed = false
 			socket.buffer = new SmartBuffer()
 			socket.on('data', (data) => {
-				console.log(data)
-				console.log(data.length)
 				tcpPacketHandler(socket, data)
 			})
 			socket.on("error", () => {
