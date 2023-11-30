@@ -14,7 +14,6 @@ const walkOffsets = [[-1, 0, 0], [0, -1, 0], [0, 0, -1], [1, 0, 0], [0, 1, 0], [
 class Walker {
 	constructor(client) {
 		this.client = client
-		this.walkDistance = 1
 		this.randomizePosition()
 	}
 	randomizePosition() {
