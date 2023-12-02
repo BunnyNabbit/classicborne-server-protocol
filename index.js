@@ -13,6 +13,15 @@ const maxBuffer = 5000
 function readString(buffer) {
 	return buffer.readString(64, "ascii").trim()
 }
+function readFixedShort(buffer) {
+	const data = buffer.readUInt16BE()
+	const fraction = (data << 27) >>> 27
+	const integer = data >>> 5
+	return integer + (fraction / 32)
+}
+function fixedShort(num) {
+	new SmartBuffer({ size: 4 })
+}
 function tcpPacketHandler(socket, data) {
 	if (data) socket.buffer.writeBuffer(data)
 	socket.buffer.readOffset = 0
@@ -44,6 +53,19 @@ function tcpPacketHandler(socket, data) {
 			socket.buffer.readUInt8()
 			const message = readString(socket.buffer)
 			socket.client.emit("message", message)
+			break
+		case 0x08:
+			socket.buffer.readInt8() // unused
+			const position = {
+				x: readFixedShort(socket.buffer),
+				y: readFixedShort(socket.buffer),
+				z: readFixedShort(socket.buffer),
+			}
+			const orientation = {
+				yaw: socket.buffer.readUInt8(),
+				pitch: socket.buffer.readUInt8()
+			}
+			socket.client.emit("position", position, orientation)
 			break
 	}
 	socket.buffer.readOffset = size
