@@ -49,6 +49,15 @@ function tcpPacketHandler(socket, data) {
 				username, key
 			})
 			break
+		case 0x05:
+			socket.client.emit("setBlock", {
+				x: socket.buffer.readUInt16BE(),
+				y: socket.buffer.readUInt16BE(),
+				z: socket.buffer.readUInt16BE(),
+				mode: socket.buffer.readUInt8(),
+				type: socket.buffer.readUInt8()
+			})
+			break
 		case 0x0d:
 			socket.buffer.readUInt8()
 			const message = readString(socket.buffer)
