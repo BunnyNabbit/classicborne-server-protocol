@@ -189,6 +189,7 @@ return module.exports = class Server extends EventEmitter {
 				return socket.destroy()
 			})
 			socket.once('close', () => {
+				client.emit("close")
 			})
 		})
 		this.utils = utils
