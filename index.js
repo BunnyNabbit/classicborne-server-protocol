@@ -2,7 +2,12 @@ const net = require("net")
 const SmartBuffer = require("smart-buffer").SmartBuffer
 const EventEmitter = require("events").EventEmitter
 const utils = require("./utils.js")
-
+const extensions = [
+	{
+		name: "ClickDistance",
+		version: 1
+	}
+]
 const defaultPacketSizes = {
 	0x00: 131,
 	0x0d: 66,
@@ -27,7 +32,6 @@ function readFixedShort(buffer) {
 }
 function fixedShort(num) {
 	const fraction = Math.abs((num - Math.trunc(num)) * 32)
-	console.log("fraction", fraction)
 	let integer = Math.abs(Math.trunc(num))
 	let sign
 	if (Math.sign(num) == -1) {
@@ -36,7 +40,6 @@ function fixedShort(num) {
 	} else {
 		sign = 0
 	}
-	console.log((fraction | (integer << 5) | sign << 15).toString(2))
 	return (fraction | (integer << 5) | sign << 15)
 }
 function tcpPacketHandler(socket, data) {
@@ -52,19 +55,48 @@ function tcpPacketHandler(socket, data) {
 	}
 	switch (type) {
 		case 0x00:
-			if (socket.authed) {
-				console.log("attempted reauth")
+			if (socket.authed || socket.cpeNegotiating) {
 				return socket.destroy()
 			}
-			socket.authed = true
 			const version = socket.buffer.readUInt8()
 			if (version !== 0x07) return socket.destroy()
 			const username = readString(socket.buffer)
 			const key = readString(socket.buffer)
-			socket.buffer.readUInt8() // unused byte
-			socket.client.server.emit("clientConnected", socket.client, {
-				username, key
-			})
+			const padding = socket.buffer.readUInt8()
+			if (padding == 0x42 && socket.client.server.cpeEnabled) {
+				// ExtInfo
+				socket.cpeNegotiating = true
+				const buffer = new SmartBuffer({ size: 67 }).writeUInt8(0x10)
+				buffer.writeBuffer(padString(socket.client.server.appName))
+				buffer.writeUInt16BE(extensions.length)
+				socket.write(buffer.toBuffer())
+				extensions.forEach(extension => {
+					// ExtEntry
+					const buffer = new SmartBuffer({ size: 69 }).writeUInt8(0x11)
+					buffer.writeBuffer(padString(extension.name))
+					buffer.writeInt32BE(extension.version)
+					socket.write(buffer.toBuffer())
+				})
+				socket.client.packetSizes[0x10] = 67
+				socket.client.packetSizes[0x11] = 69
+				socket.cpeExtensions = []
+				socket.cpeExtensionsCount = 0
+				socket.client.once("extensions", (extensions) => {
+					socket.authed = true
+					socket.client.server.emit("clientConnected", socket.client, {
+						username, key, extensions
+					})
+					// resolve()
+				})
+				// new Promise((resolve) => {
+					
+				// })
+			} else {
+				socket.authed = true
+				socket.client.server.emit("clientConnected", socket.client, {
+					username, key
+				})
+			}
 			break
 		case 0x05:
 			socket.client.emit("setBlock", {
@@ -92,6 +124,22 @@ function tcpPacketHandler(socket, data) {
 				pitch: socket.buffer.readUInt8()
 			}
 			socket.client.emit("position", position, orientation)
+			break
+		// Extensions
+		case 0x10: // ExtInfo
+			socket.appName = readString(socket.buffer)
+			socket.cpeExtensionsCount = socket.buffer.readInt16BE()
+			if (socket.cpeExtensionsCount == 0) socket.client.emit("extensions", [])
+			break
+		case 0x11: // ExtInfo
+			if (socket.authed) return socket.destroy()
+			if (!socket.cpeExtensions) return socket.destroy()
+			const extension = {
+				name: readString(socket.buffer),
+				version: socket.buffer.readInt16BE()
+			}
+			socket.cpeExtensions.push(extension)
+			if (socket.cpeExtensionsCount == socket.cpeExtensions.length) socket.client.emit("extensions", socket.cpeExtensions)
 			break
 	}
 	socket.buffer.readOffset = size
@@ -207,6 +255,12 @@ class Client extends EventEmitter {
 		buffer.writeInt8(userType)
 		this.socket.write(buffer.toBuffer())
 	}
+	// Extensions
+	setClickDistance(distance) {
+		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x12)
+		buffer.writeInt16BE(distance)
+		this.socket.write(buffer.toBuffer())
+	}
 }
 
 return module.exports = class Server extends EventEmitter {
@@ -230,5 +284,8 @@ return module.exports = class Server extends EventEmitter {
 			})
 		})
 		this.utils = utils
+		this.cpeEnabled = true
+		this.appName = "Classicborne Protocol"
+		this.extensions = extensions
 	}
 }
