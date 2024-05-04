@@ -16,11 +16,28 @@ function readString(buffer) {
 function readFixedShort(buffer) {
 	const data = buffer.readUInt16BE()
 	const fraction = (data << 27) >>> 27
-	const integer = data >>> 5
-	return integer + (fraction / 32)
+	let integer = (data << 17) >>> 22
+	const sign = data >>> 15
+	if (sign) {
+		integer = -(integer + 1)
+		return integer - (fraction / 32)
+	} else {
+		return integer + (fraction / 32)
+	}
 }
-function fixedShort(num) {
-	new SmartBuffer({ size: 4 })
+function fixedShort() {
+	const fraction = Math.abs((num - Math.trunc(num)) * 32)
+	console.log("fraction", fraction)
+	let integer = Math.abs(Math.trunc(num))
+	let sign
+	if (Math.sign(num) == -1) {
+		sign = 1
+		integer = Math.max(integer - 1, 0)
+	} else {
+		sign = 0
+	}
+	console.log((fraction | (integer << 5) | sign << 15).toString(2))
+	return (fraction | (integer << 5) | sign << 15)
 }
 function tcpPacketHandler(socket, data) {
 	if (data) socket.buffer.writeBuffer(data)
