@@ -197,6 +197,11 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
+	despawnPlayer(id) {
+		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0c)
+		buffer.writeInt8(id)
+		this.socket.write(buffer.toBuffer())
+	}
 }
 
 return module.exports = class Server extends EventEmitter {
