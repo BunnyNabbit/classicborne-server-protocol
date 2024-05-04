@@ -187,6 +187,16 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(type)
 		this.socket.write(buffer.toBuffer())
 	}
+	absolutePositionUpdate(id, x, y, z, yaw, pitch) {
+		const buffer = new SmartBuffer({ size: 10 }).writeUInt8(0x08)
+		buffer.writeInt8(id)
+		buffer.writeUInt16BE(fixedShort(x))
+		buffer.writeUInt16BE(fixedShort(y))
+		buffer.writeUInt16BE(fixedShort(z))
+		buffer.writeUInt8(yaw)
+		buffer.writeUInt8(pitch)
+		this.socket.write(buffer.toBuffer())
+	}
 }
 
 return module.exports = class Server extends EventEmitter {
