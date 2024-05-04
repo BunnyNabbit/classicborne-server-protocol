@@ -25,7 +25,7 @@ function readFixedShort(buffer) {
 		return integer + (fraction / 32)
 	}
 }
-function fixedShort() {
+function fixedShort(num) {
 	const fraction = Math.abs((num - Math.trunc(num)) * 32)
 	console.log("fraction", fraction)
 	let integer = Math.abs(Math.trunc(num))
@@ -163,13 +163,13 @@ class Client extends EventEmitter {
 	}
 	configureSpawn(id, username, x, y, z, yaw, pitch) {
 		const buffer = new SmartBuffer({ size: 74 }).writeUInt8(0x07)
-		buffer.writeInt8(-1)
+		buffer.writeInt8(id)
 		buffer.writeBuffer(padString(username))
-		buffer.writeUInt16BE(0)
-		buffer.writeUInt16BE(0)
-		buffer.writeUInt16BE(0)
-		buffer.writeUInt8(0)
-		buffer.writeUInt8(0)
+		buffer.writeUInt16BE(fixedShort(x))
+		buffer.writeUInt16BE(fixedShort(y))
+		buffer.writeUInt16BE(fixedShort(z))
+		buffer.writeUInt8(yaw)
+		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
 	serverIdentification(serverName, motd, userType) {
