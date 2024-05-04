@@ -202,6 +202,11 @@ class Client extends EventEmitter {
 		buffer.writeInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
+	updateUserType(userType) {
+		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0f)
+		buffer.writeInt8(userType)
+		this.socket.write(buffer.toBuffer())
+	}
 }
 
 return module.exports = class Server extends EventEmitter {
