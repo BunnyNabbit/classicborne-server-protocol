@@ -184,7 +184,7 @@ class Client extends EventEmitter {
 			writeContinueAdornment = true
 		}
 	}
-	async loadLevel(data, x, y, z, processed = false, callback) { // Unprocessed data means the data is just an uncompressed buffer of block types with the volume count missing.
+	async loadLevel(data, x, y, z, processed = false, callback, preFinalize) { // Unprocessed data means the data is just an uncompressed buffer of block types with the volume count missing.
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
 
@@ -208,7 +208,7 @@ class Client extends EventEmitter {
 			dataChunkBuffer.writeUInt8((remaining / compressedPayloadBuffer.length) * 255) // Progress
 			this.socket.write(dataChunkBuffer.toBuffer())
 		}
-
+		if (preFinalize) preFinalize()
 		const finalizeBuffer = new SmartBuffer({ size: 7 }).writeUInt8(0x04)
 		finalizeBuffer.writeInt16BE(x)
 		finalizeBuffer.writeInt16BE(y)
