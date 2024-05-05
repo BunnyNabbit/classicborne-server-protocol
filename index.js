@@ -60,7 +60,6 @@ function fixedShort(num) {
 }
 function tcpPacketHandler(socket, data) {
 	if (data) socket.buffer.writeBuffer(data)
-	socket.buffer.readOffset = 0
 	const length = socket.buffer.remaining()
 	const type = socket.buffer.readUInt8()
 	const size = socket.client.packetSizes[type]
@@ -152,7 +151,7 @@ function tcpPacketHandler(socket, data) {
 			if (!socket.cpeExtensions) return socket.destroy()
 			const extension = {
 				name: readString(socket.buffer),
-				version: socket.buffer.readInt16BE()
+				version: socket.buffer.readInt32BE()
 			}
 			switch (extension.name) {
 				case "CustomBlocks":
@@ -163,11 +162,12 @@ function tcpPacketHandler(socket, data) {
 			if (socket.cpeExtensionsCount == socket.cpeExtensions.length) socket.client.emit("extensions", socket.cpeExtensions)
 			break
 		case 0x13: // CustomBlockSupportLevel 
-			if (socket.client.customBlockSupport != null) return
-			socket.client.customBlockSupport = socket.buffer.readUInt8()
+			const customBlocksSupportLevel = socket.buffer.readUInt8()
+			if (socket.client.customBlockSupport != null) {
+				socket.client.customBlockSupport = customBlocksSupportLevel
+			}
 			break
 	}
-	socket.buffer.readOffset = size
 	socket.buffer = SmartBuffer.fromBuffer(socket.buffer.readBuffer(socket.buffer.remaining()))
 	if (socket.buffer.remaining()) tcpPacketHandler(socket)
 }
