@@ -6,6 +6,10 @@ const extensions = [
 	{
 		name: "ClickDistance",
 		version: 1
+	},
+	{
+		name: "BlockDefinitions",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -259,6 +263,31 @@ class Client extends EventEmitter {
 	setClickDistance(distance) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x12)
 		buffer.writeInt16BE(distance)
+		this.socket.write(buffer.toBuffer())
+	}
+	defineBlock(block) {
+		const buffer = new SmartBuffer({ size: 80 }).writeUInt8(0x23)
+		buffer.writeUInt8(block.id)
+		buffer.writeBuffer(padString(block.name ?? ""))
+		buffer.writeUInt8(block.collision ?? 2)
+		buffer.writeUInt8(block.speed ?? 128)
+		buffer.writeUInt8(block.topTexture ?? 0)
+		buffer.writeUInt8(block.sideTexture ?? 0)
+		buffer.writeUInt8(block.bottomTexture ?? 0)
+		buffer.writeUInt8(block.transmitLight ?? 0)
+		buffer.writeUInt8(block.walkSound ?? 0)
+		buffer.writeUInt8(block.fullBright ?? 0)
+		buffer.writeUInt8(block.shape ?? 16)
+		buffer.writeUInt8(block.draw ?? 0)
+		buffer.writeUInt8(block.fogDensity ?? 0)
+		buffer.writeUInt8(block.fogR ?? 0)
+		buffer.writeUInt8(block.fogG ?? 0)
+		buffer.writeUInt8(block.fogB ?? 0)
+		this.socket.write(buffer.toBuffer())
+	}
+	removeBlockDefinition(blockId) {
+		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x24)
+		buffer.writeUInt8(blockId)
 		this.socket.write(buffer.toBuffer())
 	}
 }
