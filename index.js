@@ -10,6 +10,10 @@ const extensions = [
 	{
 		name: "BlockDefinitions",
 		version: 1
+	},
+	{
+		name: "InventoryOrder",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -93,7 +97,7 @@ function tcpPacketHandler(socket, data) {
 					// resolve()
 				})
 				// new Promise((resolve) => {
-					
+
 				// })
 			} else {
 				socket.authed = true
@@ -288,6 +292,12 @@ class Client extends EventEmitter {
 	removeBlockDefinition(blockId) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x24)
 		buffer.writeUInt8(blockId)
+		this.socket.write(buffer.toBuffer())
+	}
+	setInventoryOrder(id, order) {
+		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2c)
+		buffer.writeUInt8(order)
+		buffer.writeUInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
 }
