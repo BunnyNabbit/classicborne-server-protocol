@@ -12,6 +12,10 @@ const extensions = [
 		version: 1
 	},
 	{
+		name: "BlockDefinitionsExt",
+		version: 2
+	},
+	{
 		name: "InventoryOrder",
 		version: 1
 	}
@@ -282,6 +286,34 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(block.walkSound ?? 0)
 		buffer.writeUInt8(block.fullBright ?? 0)
 		buffer.writeUInt8(block.shape ?? 16)
+		buffer.writeUInt8(block.draw ?? 0)
+		buffer.writeUInt8(block.fogDensity ?? 0)
+		buffer.writeUInt8(block.fogR ?? 0)
+		buffer.writeUInt8(block.fogG ?? 0)
+		buffer.writeUInt8(block.fogB ?? 0)
+		this.socket.write(buffer.toBuffer())
+	}
+	defineBlockExt(block) {
+		const buffer = new SmartBuffer({ size: 88 }).writeUInt8(0x25)
+		buffer.writeUInt8(block.id)
+		buffer.writeBuffer(padString(block.name ?? ""))
+		buffer.writeUInt8(block.collision ?? 2)
+		buffer.writeUInt8(block.speed ?? 128)
+		buffer.writeUInt8(block.topTexture ?? 0)
+		buffer.writeUInt8(block.leftTexture ?? 0)
+		buffer.writeUInt8(block.rightTexture ?? 0)
+		buffer.writeUInt8(block.frontTexture ?? 0)
+		buffer.writeUInt8(block.backTexture ?? 0)
+		buffer.writeUInt8(block.bottomTexture ?? 0)
+		buffer.writeUInt8(block.transmitLight ?? 0)
+		buffer.writeUInt8(block.walkSound ?? 0)
+		buffer.writeUInt8(block.fullBright ?? 0)
+		buffer.writeUInt8(block.minX ?? 0)
+		buffer.writeUInt8(block.minY ?? 0)
+		buffer.writeUInt8(block.minZ ?? 0)
+		buffer.writeUInt8(block.maxX ?? 16)
+		buffer.writeUInt8(block.maxY ?? 16)
+		buffer.writeUInt8(block.maxZ ?? 16)
 		buffer.writeUInt8(block.draw ?? 0)
 		buffer.writeUInt8(block.fogDensity ?? 0)
 		buffer.writeUInt8(block.fogR ?? 0)
