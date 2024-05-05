@@ -18,6 +18,10 @@ const extensions = [
 	{
 		name: "InventoryOrder",
 		version: 1
+	},
+	{
+		name: "CustomBlocks",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -150,8 +154,17 @@ function tcpPacketHandler(socket, data) {
 				name: readString(socket.buffer),
 				version: socket.buffer.readInt16BE()
 			}
+			switch (extension.name) {
+				case "CustomBlocks":
+					socket.client.packetSizes[0x13] = 2
+					break
+			}
 			socket.cpeExtensions.push(extension)
 			if (socket.cpeExtensionsCount == socket.cpeExtensions.length) socket.client.emit("extensions", socket.cpeExtensions)
+			break
+		case 0x13: // CustomBlockSupportLevel 
+			if (socket.client.customBlockSupport != null) return
+			socket.client.customBlockSupport = socket.buffer.readUInt8()
 			break
 	}
 	socket.buffer.readOffset = size
@@ -331,6 +344,10 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(order)
 		buffer.writeUInt8(id)
 		this.socket.write(buffer.toBuffer())
+	}
+	customBlockSupport(level) {
+		const blockSupportBuffer = new SmartBuffer({ size: 2 }).writeUInt8(0x13).writeUInt8(level)
+		this.socket.write(blockSupportBuffer.toBuffer())
 	}
 }
 
