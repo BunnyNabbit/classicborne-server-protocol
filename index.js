@@ -60,11 +60,12 @@ function fixedShort(num) {
 }
 function tcpPacketHandler(socket, data) {
 	if (data) socket.buffer.writeBuffer(data)
+	socket.buffer.readOffset = 0
 	const length = socket.buffer.remaining()
 	const type = socket.buffer.readUInt8()
 	const size = socket.client.packetSizes[type]
 	if (!size || length < size) {
-		console.log("not enough", { size, bufferLength: length, type })
+		socket.buffer.writeOffset = length // we are expecting the buffer to be expanded, so set the writeOffset to end of the buffer
 		if (socket.buffer.remaining() > maxBuffer) return socket.destroy()
 		return
 	}
