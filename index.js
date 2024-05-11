@@ -26,6 +26,10 @@ const extensions = [
 	{
 		name: "EnvMapAspect",
 		version: 1
+	},
+	{
+		name: "BlockPermissions",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -370,6 +374,13 @@ class Client extends EventEmitter {
 				this.socket.write(environmentPropertyBuffer.toBuffer())
 			}
 		 }
+	}
+	setBlockPermission(id, allowPlacement, allowDeletion) {
+		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
+		blockPermissionBuffer.writeUInt8(id)
+		blockPermissionBuffer.writeUInt8(allowPlacement)
+		blockPermissionBuffer.writeUInt8(allowDeletion)
+		this.socket.write(blockPermissionBuffer.toBuffer())
 	}
 }
 
