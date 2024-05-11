@@ -22,6 +22,10 @@ const extensions = [
 	{
 		name: "CustomBlocks",
 		version: 1
+	},
+	{
+		name: "EnvMapAspect",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -31,6 +35,7 @@ const defaultPacketSizes = {
 	0x05: 9
 }
 const maxBuffer = 5000
+const environmentProperties = ["sidesId", "edgeId", "edgeHeight", "cloudsHeight", "maxFog", "cloudsSpeed", "weatherFade", "useExponentialFog", "sidesOffset"]
 function readString(buffer) {
 	return buffer.readString(64, "ascii").trim()
 }
@@ -349,6 +354,22 @@ class Client extends EventEmitter {
 	customBlockSupport(level) {
 		const blockSupportBuffer = new SmartBuffer({ size: 2 }).writeUInt8(0x13).writeUInt8(level)
 		this.socket.write(blockSupportBuffer.toBuffer())
+	}
+	texturePackUrl(url) {
+		const texturePackBuffer = new SmartBuffer({ size: 65 }).writeUInt8(0x28)
+		texturePackBuffer.writeBuffer(padString(url))
+		this.socket.write(texturePackBuffer.toBuffer())
+	}
+	setEnvironmentProperties(environment) {
+		for (const [key, value] of Object.entries(environment)) {
+			const propertyIndex = environmentProperties.indexOf(key)
+			if (propertyIndex !== -1) {
+				const environmentPropertyBuffer = new SmartBuffer({ size: 6 }).writeUInt8(0x29)
+				environmentPropertyBuffer.writeUInt8(propertyIndex)
+				environmentPropertyBuffer.writeInt32BE(value)
+				this.socket.write(environmentPropertyBuffer.toBuffer())
+			}
+		 }
 	}
 }
 
