@@ -30,6 +30,10 @@ const extensions = [
 	{
 		name: "BlockPermissions",
 		version: 1
+	},
+	{
+		name: "HeldBlock",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -138,7 +142,7 @@ function tcpPacketHandler(socket, data) {
 			socket.client.emit("message", message)
 			break
 		case 0x08:
-			socket.buffer.readInt8() // unused
+			const heldBlock = socket.buffer.readUInt8()
 			const position = {
 				x: readFixedShort(socket.buffer),
 				y: readFixedShort(socket.buffer),
@@ -148,7 +152,7 @@ function tcpPacketHandler(socket, data) {
 				yaw: socket.buffer.readUInt8(),
 				pitch: socket.buffer.readUInt8()
 			}
-			socket.client.emit("position", position, orientation)
+			socket.client.emit("position", position, orientation, heldBlock)
 			break
 		// Extensions
 		case 0x10: // ExtInfo
@@ -373,7 +377,7 @@ class Client extends EventEmitter {
 				environmentPropertyBuffer.writeInt32BE(value)
 				this.socket.write(environmentPropertyBuffer.toBuffer())
 			}
-		 }
+		}
 	}
 	setBlockPermission(id, allowPlacement, allowDeletion) {
 		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
