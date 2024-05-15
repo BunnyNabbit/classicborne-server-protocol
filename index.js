@@ -34,6 +34,10 @@ const extensions = [
 	{
 		name: "HeldBlock",
 		version: 1
+	},
+	{
+		name: "ExtPlayerList",
+		version: 2
 	}
 ]
 const defaultPacketSizes = {
@@ -385,6 +389,32 @@ class Client extends EventEmitter {
 		blockPermissionBuffer.writeUInt8(allowPlacement)
 		blockPermissionBuffer.writeUInt8(allowDeletion)
 		this.socket.write(blockPermissionBuffer.toBuffer())
+	}
+	configureSpawnExt(id, username, x, y, z, yaw, pitch, skin) {
+		const buffer = new SmartBuffer({ size: 138 }).writeUInt8(0x21)
+		buffer.writeInt8(id)
+		buffer.writeBuffer(padString(username))
+		buffer.writeBuffer(padString(skin))
+		buffer.writeUInt16BE(fixedShort(x))
+		buffer.writeUInt16BE(fixedShort(y))
+		buffer.writeUInt16BE(fixedShort(z))
+		buffer.writeUInt8(yaw)
+		buffer.writeUInt8(pitch)
+		this.socket.write(buffer.toBuffer())
+	}
+	addPlayerName(id, username, listName, groupName = "", groupOrder = 0) {
+		const buffer = new SmartBuffer({ size: 196 }).writeUInt8(0x16)
+		buffer.writeInt16BE(id)
+		buffer.writeBuffer(padString(username))
+		buffer.writeBuffer(padString(listName))
+		buffer.writeBuffer(padString(groupName))
+		buffer.writeUInt8(groupOrder)
+		this.socket.write(buffer.toBuffer())
+	}
+	removePlayerName(id) {
+		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x18)
+		buffer.writeInt16BE(id)
+		this.socket.write(buffer.toBuffer())
 	}
 }
 
