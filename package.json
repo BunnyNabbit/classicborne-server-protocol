@@ -1,13 +1,14 @@
 {
   "name": "classicborne-server-protocol",
   "version": "0.0.0",
-  "description": "Minecraft classic server protocol",
+  "description": "Minecraft classic server protocol with partial CPE support",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
+  "repository": "github:BunnyNabbit/classicborne-server-protocol",
   "dependencies": {
     "smart-buffer": "^4.2.0"
   }
