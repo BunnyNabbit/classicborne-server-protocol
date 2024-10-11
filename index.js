@@ -452,7 +452,7 @@ class Client extends EventEmitter {
 	}
 }
 
-return module.exports = class Server extends EventEmitter {
+module.exports = class Server extends EventEmitter {
 	constructor(port) {
 		super()
 		this.tcpServer = net.createServer()
