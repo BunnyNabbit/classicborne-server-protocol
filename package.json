@@ -8,7 +8,10 @@
   },
   "author": "",
   "license": "MIT",
-  "repository": "github:BunnyNabbit/classicborne-server-protocol",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BunnyNabbit/classicborne-server-protocol.git"
+  },
   "dependencies": {
     "smart-buffer": "^4.2.0",
     "ws": "^8.18.0"
