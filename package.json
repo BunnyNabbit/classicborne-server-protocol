@@ -10,6 +10,7 @@
   "license": "MIT",
   "repository": "github:BunnyNabbit/classicborne-server-protocol",
   "dependencies": {
-    "smart-buffer": "^4.2.0"
+    "smart-buffer": "^4.2.0",
+    "ws": "^8.18.0"
   }
 }

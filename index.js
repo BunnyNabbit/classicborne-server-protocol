@@ -44,7 +44,8 @@ const defaultPacketSizes = {
 	0x00: 131,
 	0x0d: 66,
 	0x08: 10,
-	0x05: 9
+	0x05: 9,
+	0x47: 1
 }
 const maxBuffer = 5000
 const environmentProperties = ["sidesId", "edgeId", "edgeHeight", "cloudsHeight", "maxFog", "cloudsSpeed", "weatherFade", "useExponentialFog", "sidesOffset"]
@@ -88,7 +89,7 @@ function tcpPacketHandler(socket, data) {
 	}
 	switch (type) {
 		case 0x00:
-			if (socket.authed || socket.cpeNegotiating) {
+			if (socket.client.authed || socket.client.cpeNegotiating) {
 				return socket.destroy()
 			}
 			const version = socket.buffer.readUInt8()
@@ -98,7 +99,7 @@ function tcpPacketHandler(socket, data) {
 			const padding = socket.buffer.readUInt8()
 			if (padding == 0x42 && socket.client.server.cpeEnabled) {
 				// ExtInfo
-				socket.cpeNegotiating = true
+				socket.client.cpeNegotiating = true
 				const buffer = new SmartBuffer({ size: 67 }).writeUInt8(0x10)
 				buffer.writeBuffer(padString(socket.client.server.appName))
 				buffer.writeUInt16BE(extensions.length)
@@ -115,7 +116,7 @@ function tcpPacketHandler(socket, data) {
 				socket.cpeExtensions = []
 				socket.cpeExtensionsCount = 0
 				socket.client.once("extensions", (extensions) => {
-					socket.authed = true
+					socket.client.authed = true
 					socket.client.server.emit("clientConnected", socket.client, {
 						username, key, extensions
 					})
@@ -125,7 +126,7 @@ function tcpPacketHandler(socket, data) {
 
 				// })
 			} else {
-				socket.authed = true
+				socket.client.authed = true
 				socket.client.server.emit("clientConnected", socket.client, {
 					username, key
 				})
@@ -165,7 +166,7 @@ function tcpPacketHandler(socket, data) {
 			if (socket.cpeExtensionsCount == 0) socket.client.emit("extensions", [])
 			break
 		case 0x11: // ExtInfo
-			if (socket.authed) return socket.destroy()
+			if (socket.client.authed) return socket.destroy()
 			if (!socket.cpeExtensions) return socket.destroy()
 			const extension = {
 				name: readString(socket.buffer),
@@ -185,7 +186,14 @@ function tcpPacketHandler(socket, data) {
 				socket.client.customBlockSupport = customBlocksSupportLevel
 			}
 			break
+		case 0x47: // part of GET for WebSocket
+			if (socket.client.getChecked || !socket.client.server.httpServer || !isTrustedWebSocketProxy(socket)) return // can trigger multiple times
+			socket.client.getChecked = true
+			socket.client.server.httpServer.upgradeSocketToHttp(socket, socket.buffer.toBuffer())
+			socket.client.usingWebSocket = true
+			return
 	}
+	socket.client.getChecked = true
 	socket.buffer = SmartBuffer.fromBuffer(socket.buffer.readBuffer(socket.buffer.remaining()))
 	if (socket.buffer.remaining()) tcpPacketHandler(socket)
 }
@@ -194,12 +202,38 @@ function padString(string) {
 	buffer.writeString(" ".repeat(64 - buffer.writeOffset))
 	return buffer.toBuffer()
 }
+function isTrustedWebSocketProxy(address) {
+	return true
+}
+class SocketImpostor extends EventEmitter {
+	constructor(websocket) {
+		super()
+		this.websocket = websocket
+		websocket.on("message", data => {
+			this.emit("data", data)
+		})
+		this.buffer = new SmartBuffer()
+	}
+	write(buffer) {
+		try {
+			this.websocket.send(buffer)
+		} catch (error) {
+			console.error(error)
+		}
+	}
+	destroy() {
+		this.websocket.close()
+	}
+}
 class Client extends EventEmitter {
 	constructor(socket, server) {
 		super()
 		this.socket = socket
 		this.server = server
+		this.usingWebSocket = false
 		this.packetSizes = JSON.parse(JSON.stringify(defaultPacketSizes))
+		this.authed = false
+		this.cpeNegotiating = false
 	}
 	message(message, messageType = -1, continueAdornment = ">") {
 		const asciiBuffer = SmartBuffer.fromBuffer(Buffer.from(message, "ascii"))
@@ -426,21 +460,33 @@ return module.exports = class Server extends EventEmitter {
 		this.tcpServer.on('connection', (socket) => {
 			const client = new Client(socket, this)
 			socket.client = client
-			socket.authed = false
 			socket.buffer = new SmartBuffer()
-			socket.on('data', (data) => {
+			const currenzHandler = (data) => {
 				tcpPacketHandler(socket, data)
-			})
+			}
+			socket.on('data', currenzHandler)
 			socket.on("error", () => {
 				return socket.destroy()
 			})
 			socket.once('close', () => {
 				client.emit("close")
 			})
+			socket.once("upgradeWebSocket", (webSocket, request) => {
+				socket.removeListener("data", currenzHandler)
+				client.socket = new SocketImpostor(webSocket)
+				client.socket.client= client
+				client.socket.on("data", (data) => {
+					tcpPacketHandler(client.socket, data)
+				})
+			})
 		})
 		this.utils = utils
 		this.cpeEnabled = true
 		this.appName = "Classicborne Protocol"
 		this.extensions = extensions
+	}
+	setupWebSocketServer() {
+		const UpgradingHttpServer = require("./UpgradingHttpServer.js")
+		this.httpServer = new UpgradingHttpServer()
 	}
 }
