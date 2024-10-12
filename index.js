@@ -187,7 +187,7 @@ function tcpPacketHandler(socket, data) {
 			}
 			break
 		case 0x47: // part of GET for WebSocket
-			if (socket.client.getChecked || !socket.client.server.httpServer || !isTrustedWebSocketProxy(socket)) return // can trigger multiple times
+			if (socket.client.getChecked || !socket.client.server.httpServer || !socket.client.server.isTrustedWebSocketProxy(socket.remoteAddress)) return // can trigger multiple times
 			socket.client.getChecked = true
 			socket.client.server.httpServer.upgradeSocketToHttp(socket, socket.buffer.toBuffer())
 			socket.client.usingWebSocket = true
@@ -202,8 +202,9 @@ function padString(string) {
 	buffer.writeString(" ".repeat(64 - buffer.writeOffset))
 	return buffer.toBuffer()
 }
-function isTrustedWebSocketProxy(address) {
-	return true
+function isTrustedWebSocketProxy(remoteAddress) {
+	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy
+	return false
 }
 class SocketImpostor extends EventEmitter {
 	constructor(websocket) {
@@ -474,16 +475,18 @@ module.exports = class Server extends EventEmitter {
 			socket.once("upgradeWebSocket", (webSocket, request) => {
 				socket.removeListener("data", currenzHandler)
 				client.socket = new SocketImpostor(webSocket)
-				client.socket.client= client
+				client.socket.client = client
 				client.socket.on("data", (data) => {
 					tcpPacketHandler(client.socket, data)
 				})
+				client.httpRequest = request
 			})
 		})
 		this.utils = utils
 		this.cpeEnabled = true
 		this.appName = "Classicborne Protocol"
 		this.extensions = extensions
+		this.isTrustedWebSocketProxy = isTrustedWebSocketProxy
 	}
 	setupWebSocketServer() {
 		const UpgradingHttpServer = require("./UpgradingHttpServer.js")
