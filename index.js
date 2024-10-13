@@ -113,8 +113,8 @@ function tcpPacketHandler(socket, data) {
 				})
 				socket.client.packetSizes[0x10] = 67
 				socket.client.packetSizes[0x11] = 69
-				socket.cpeExtensions = []
-				socket.cpeExtensionsCount = 0
+				socket.client.cpeExtensions = []
+				socket.client.cpeExtensionsCount = 0
 				socket.client.once("extensions", (extensions) => {
 					socket.client.authed = true
 					socket.client.server.emit("clientConnected", socket.client, {
@@ -161,13 +161,13 @@ function tcpPacketHandler(socket, data) {
 			break
 		// Extensions
 		case 0x10: // ExtInfo
-			socket.appName = readString(socket.buffer)
-			socket.cpeExtensionsCount = socket.buffer.readInt16BE()
-			if (socket.cpeExtensionsCount == 0) socket.client.emit("extensions", [])
+			socket.client.appName = readString(socket.buffer)
+			socket.client.cpeExtensionsCount = socket.buffer.readInt16BE()
+			if (socket.client.cpeExtensionsCount == 0) socket.client.emit("extensions", [])
 			break
 		case 0x11: // ExtInfo
 			if (socket.client.authed) return socket.destroy()
-			if (!socket.cpeExtensions) return socket.destroy()
+			if (!socket.client.cpeExtensions) return socket.destroy()
 			const extension = {
 				name: readString(socket.buffer),
 				version: socket.buffer.readInt32BE()
@@ -177,8 +177,8 @@ function tcpPacketHandler(socket, data) {
 					socket.client.packetSizes[0x13] = 2
 					break
 			}
-			socket.cpeExtensions.push(extension)
-			if (socket.cpeExtensionsCount == socket.cpeExtensions.length) socket.client.emit("extensions", socket.cpeExtensions)
+			socket.client.cpeExtensions.push(extension)
+			if (socket.client.cpeExtensionsCount == socket.client.cpeExtensions.length) socket.client.emit("extensions", socket.client.cpeExtensions)
 			break
 		case 0x13: // CustomBlockSupportLevel 
 			const customBlocksSupportLevel = socket.buffer.readUInt8()
