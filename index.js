@@ -38,6 +38,10 @@ const extensions = [
 	{
 		name: "ExtPlayerList",
 		version: 2
+	},
+	{
+		name: "EntityProperty",
+		version: 1
 	}
 ]
 const defaultPacketSizes = {
@@ -449,6 +453,13 @@ class Client extends EventEmitter {
 	removePlayerName(id) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x18)
 		buffer.writeInt16BE(id)
+		this.socket.write(buffer.toBuffer())
+	}
+	setEntityProperty(id, propertyType, value) {
+		const buffer = new SmartBuffer({ size: 7 }).writeUInt8(0x2a)
+		buffer.writeUInt8(id)
+		buffer.writeUInt8(propertyType)
+		buffer.writeUInt32BE(value)
 		this.socket.write(buffer.toBuffer())
 	}
 }
