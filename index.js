@@ -191,7 +191,7 @@ function tcpPacketHandler(socket, data) {
 			}
 			break
 		case 0x47: // part of GET for WebSocket
-			if (socket.client.getChecked || !socket.client.server.httpServer || !socket.client.server.isTrustedWebSocketProxy(socket.remoteAddress)) return // can trigger multiple times
+			if (socket.client.getChecked || !socket.client.server.httpServer) return // can trigger multiple times
 			socket.client.getChecked = true
 			socket.client.server.httpServer.upgradeSocketToHttp(socket, socket.buffer.toBuffer())
 			socket.client.usingWebSocket = true
