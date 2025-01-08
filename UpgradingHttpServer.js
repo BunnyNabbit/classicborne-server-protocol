@@ -17,6 +17,9 @@ class UpgradingHttpServer {
 		})
 		this.httpServer.on('upgrade', (req, socket, head) => {
 			this.webSocketServer.handleUpgrade(req, socket, head, (ws) => {
+				if (socket.client.server.isTrustedWebSocketProxy(socket.remoteAddress)) {
+					socket.client.address = req.headers["x-forwarded-for"]
+				}
 				this.webSocketServer.emit('connection', ws, req)
 			})
 		})

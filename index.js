@@ -239,6 +239,7 @@ class Client extends EventEmitter {
 		this.packetSizes = JSON.parse(JSON.stringify(defaultPacketSizes))
 		this.authed = false
 		this.cpeNegotiating = false
+		this.address = socket.remoteAddress
 	}
 	message(message, messageType = -1, continueAdornment = ">") {
 		const asciiBuffer = SmartBuffer.fromBuffer(Buffer.from(message, "ascii"))
