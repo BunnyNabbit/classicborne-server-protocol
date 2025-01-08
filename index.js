@@ -492,12 +492,18 @@ module.exports = class Server extends EventEmitter {
 				})
 				client.httpRequest = request
 			})
+			setTimeout(() => {
+				if (!client.authed) {
+					socket.destroy()
+				}
+			}, this.connectionTimeout)
 		})
 		this.utils = utils
 		this.cpeEnabled = true
 		this.appName = "Classicborne Protocol"
 		this.extensions = extensions
 		this.isTrustedWebSocketProxy = isTrustedWebSocketProxy
+		this.connectionTimeout = 30 * 1000
 	}
 	setupWebSocketServer() {
 		const UpgradingHttpServer = require("./UpgradingHttpServer.js")
