@@ -466,10 +466,10 @@ class Client extends EventEmitter {
 }
 
 module.exports = class Server extends EventEmitter {
-	constructor(port) {
+	constructor(port = 25565, host) {
 		super()
 		this.tcpServer = net.createServer()
-		this.tcpServer.listen(port)
+		this.tcpServer.listen(port, host)
 		this.tcpServer.on('connection', (socket) => {
 			const client = new Client(socket, this)
 			socket.client = client
