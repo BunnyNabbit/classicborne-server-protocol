@@ -241,6 +241,12 @@ class Client extends EventEmitter {
 		buffer.writeUInt32BE(value)
 		this.socket.write(buffer.toBuffer())
 	}
+	setHotbar(blockId, hotbarIndex) {
+		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2d)
+		buffer.writeUInt8(blockId)
+		buffer.writeUInt8(hotbarIndex)
+		this.socket.write(buffer.toBuffer())
+	}
 	static environmentProperties = ["sidesId", "edgeId", "edgeHeight", "cloudsHeight", "maxFog", "cloudsSpeed", "weatherFade", "useExponentialFog", "sidesOffset"]
 	static defaultPacketSizes = {
 		0x00: 131,

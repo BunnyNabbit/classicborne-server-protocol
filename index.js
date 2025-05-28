@@ -44,6 +44,10 @@ const extensions = [
 	{
 		name: "EntityProperty",
 		version: 1
+	},
+	{
+		name: "SetHotbar",
+		version: 0
 	}
 ]
 const maxBuffer = 5000
