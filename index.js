@@ -58,7 +58,7 @@ function tcpPacketHandler(socket, data) {
 	const type = socket.buffer.readUInt8()
 	const size = socket.client.packetSizes[type]
 	if (!size || length < size) {
-		socket.buffer.writeOffset = length
+		socket.buffer.writeOffset = length // we are expecting the buffer to be expanded, so set the writeOffset to end of the buffer
 		if (socket.buffer.remaining() > maxBuffer) return socket.destroy()
 		return
 	}
@@ -73,12 +73,14 @@ function tcpPacketHandler(socket, data) {
 			const key = DataTypes.readString(socket.buffer)
 			const padding = socket.buffer.readUInt8()
 			if (padding == 0x42 && socket.client.server.cpeEnabled) {
+				// ExtInfo
 				socket.client.cpeNegotiating = true
 				const buffer = new SmartBuffer({ size: 67 }).writeUInt8(0x10)
 				buffer.writeBuffer(DataTypes.padString(socket.client.server.appName))
 				buffer.writeUInt16BE(extensions.length)
 				socket.write(buffer.toBuffer())
 				extensions.forEach((extension) => {
+					// ExtEntry
 					const buffer = new SmartBuffer({ size: 69 }).writeUInt8(0x11)
 					buffer.writeBuffer(DataTypes.padString(extension.name))
 					buffer.writeInt32BE(extension.version)
@@ -91,16 +93,13 @@ function tcpPacketHandler(socket, data) {
 				socket.client.once("extensions", (extensions) => {
 					socket.client.authed = true
 					socket.client.server.emit("clientConnected", socket.client, {
-						username,
-						key,
-						extensions,
+						username, key, extensions
 					})
 				})
 			} else {
 				socket.client.authed = true
 				socket.client.server.emit("clientConnected", socket.client, {
-					username,
-					key,
+					username, key
 				})
 			}
 			break
@@ -131,13 +130,13 @@ function tcpPacketHandler(socket, data) {
 			}
 			socket.client.emit("position", position, orientation, heldBlock)
 			break
-		case 0x10:
+		// Extensions
+		case 0x10: // ExtInfo
 			socket.client.appName = DataTypes.readString(socket.buffer)
 			socket.client.cpeExtensionsCount = socket.buffer.readInt16BE()
-			if (socket.client.cpeExtensionsCount == 0)
-				socket.client.emit("extensions", [])
+			if (socket.client.cpeExtensionsCount == 0) socket.client.emit("extensions", [])
 			break
-		case 0x11:
+		case 0x11: // ExtInfo
 			if (socket.client.authed) return socket.destroy()
 			if (!socket.client.cpeExtensions) return socket.destroy()
 			const extension = {
@@ -150,35 +149,27 @@ function tcpPacketHandler(socket, data) {
 					break
 			}
 			socket.client.cpeExtensions.push(extension)
-			if (
-				socket.client.cpeExtensionsCount == socket.client.cpeExtensions.length
-			)
-				socket.client.emit("extensions", socket.client.cpeExtensions)
+			if (socket.client.cpeExtensionsCount == socket.client.cpeExtensions.length) socket.client.emit("extensions", socket.client.cpeExtensions)
 			break
-		case 0x13:
+		case 0x13: // CustomBlockSupportLevel 
 			const customBlocksSupportLevel = socket.buffer.readUInt8()
 			if (socket.client.customBlockSupport != null) {
 				socket.client.customBlockSupport = customBlocksSupportLevel
 			}
 			break
-		case 0x47:
-			if (socket.client.getChecked || !socket.client.server.httpServer) return
+		case 0x47: // part of GET for WebSocket
+			if (socket.client.getChecked || !socket.client.server.httpServer) return // can trigger multiple times
 			socket.client.getChecked = true
-			socket.client.server.httpServer.upgradeSocketToHttp(
-				socket,
-				socket.buffer.toBuffer()
-			)
+			socket.client.server.httpServer.upgradeSocketToHttp(socket, socket.buffer.toBuffer())
 			socket.client.usingWebSocket = true
 			return
 	}
 	socket.client.getChecked = true
-	socket.buffer = SmartBuffer.fromBuffer(
-		socket.buffer.readBuffer(socket.buffer.remaining())
-	)
+	socket.buffer = SmartBuffer.fromBuffer(socket.buffer.readBuffer(socket.buffer.remaining()))
 	if (socket.buffer.remaining()) tcpPacketHandler(socket)
 }
 function isTrustedWebSocketProxy(remoteAddress) {
-	if (remoteAddress == "::ffff:34.223.5.250") return true
+	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy
 	return false
 }
 class SocketImpostor extends EventEmitter {
