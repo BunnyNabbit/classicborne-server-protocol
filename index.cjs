@@ -1,7 +1,7 @@
 const net = require("net")
 const { SmartBuffer } = require("smart-buffer")
 const EventEmitter = require("events").EventEmitter
-const utils = require("./utils.js")
+const utils = require("./utils.cjs")
 const Client = require("./class/Client.cjs")
 const DataTypes = require("./class/DataTypes.cjs")
 const extensions = [
@@ -132,7 +132,7 @@ module.exports = class Server extends EventEmitter {
 	 * @returns {UpgradingHttpServer} The UpgradingHttpServer instance.
 	 */
 	setupWebSocketServer() {
-		const UpgradingHttpServer = require("./UpgradingHttpServer.js")
+		const UpgradingHttpServer = require("./UpgradingHttpServer.cjs")
 		this.httpServer = new UpgradingHttpServer()
 	}
 	/**Handles incoming TCP packets from the client.

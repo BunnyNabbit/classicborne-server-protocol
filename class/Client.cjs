@@ -1,5 +1,5 @@
 const DataTypes = require("./DataTypes.cjs")
-const utils = require("../utils.js")
+const utils = require("../utils.cjs")
 const { EventEmitter } = require("events")
 const { SmartBuffer } = require("smart-buffer")
 

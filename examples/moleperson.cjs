@@ -1,4 +1,4 @@
-// Moleman game
+// Moleperson game
 
 const { createNoise2D, createNoise3D } = require('simplex-noise');
 const Server = require("classicborne-server-protocol")
@@ -109,7 +109,7 @@ class Monster {
 }
 
 server.on("clientConnected", async (client, authInfo) => {
-	client.serverIdentification("Moleman", " Moleman game", 0x00)
+	client.serverIdentification("Moleperson", " Moleperson game", 0x00)
 	client.level = createTerrain()
 	client.loadLevel(client.level, bounds[0], bounds[1], bounds[2], false, () => {
 		client.configureSpawn(0, authInfo.username, 128, 256, 128, 0, 0)
