@@ -49,6 +49,10 @@ const extensions = [
 		name: "SetHotbar",
 		version: 0,
 	},
+	{
+		name: "FullCP437",
+		version: 1,
+	}
 ]
 function isTrustedWebSocketProxy(remoteAddress) {
 	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy

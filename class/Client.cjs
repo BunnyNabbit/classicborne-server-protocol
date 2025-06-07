@@ -2,6 +2,7 @@ const DataTypes = require("./DataTypes.cjs")
 const utils = require("../utils.cjs")
 const { EventEmitter } = require("events")
 const { SmartBuffer } = require("smart-buffer")
+const CodePage437 = require("./CodePage437.cjs")
 
 /** Represents a client */
 class Client extends EventEmitter {
@@ -20,14 +21,14 @@ class Client extends EventEmitter {
 		this.address = socket.remoteAddress
 	}
 	message(message, messageType = -1, continueAdornment = ">") {
-		const asciiBuffer = SmartBuffer.fromBuffer(Buffer.from(message, "ascii"))
-		const continueAsciiBuffer = Buffer.from(continueAdornment, "ascii")
-		if (continueAsciiBuffer.length > 63) throw new Error("Continue adornment must not be over 63 characters long.")
+		const cp437Buffer = SmartBuffer.fromBuffer(CodePage437.to(message))
+		const continueAdornmentBuffer = CodePage437.to(continueAdornment)
+		if (continueAdornmentBuffer.length > 63) throw new Error("Continue adornment must not be over 63 characters long.")
 		let writeContinueAdornment = false
-		while (asciiBuffer.remaining()) {
+		while (cp437Buffer.remaining()) {
 			const buffer = new SmartBuffer({ size: 66 }).writeUInt8(0x0d).writeInt8(messageType)
-			if (writeContinueAdornment) buffer.writeBuffer(continueAsciiBuffer)
-			buffer.writeBuffer(asciiBuffer.readBuffer(66 - buffer.writeOffset))
+			if (writeContinueAdornment) buffer.writeBuffer(continueAdornmentBuffer)
+			buffer.writeBuffer(cp437Buffer.readBuffer(66 - buffer.writeOffset))
 			buffer.writeString(" ".repeat(66 - buffer.writeOffset)) // padding
 			this.socket.write(buffer.toBuffer())
 			writeContinueAdornment = true
@@ -66,7 +67,7 @@ class Client extends EventEmitter {
 		if (callback) callback()
 	}
 	disconnect(message) {
-		const buffer = new SmartBuffer({ size: 65 }).writeUInt8(0x0e).writeString(message, "ascii")
+		const buffer = new SmartBuffer({ size: 65 }).writeUInt8(0x0e).writeBuffer(CodePage437.to(message))
 		buffer.writeString(" ".repeat(65 - buffer.writeOffset))
 		this.socket.write(buffer.toBuffer())
 	}

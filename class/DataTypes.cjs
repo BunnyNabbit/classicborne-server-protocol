@@ -1,10 +1,11 @@
 const { SmartBuffer } = require("smart-buffer")
+const CodePage437 = require("./CodePage437.cjs")
 /**Namespace for data type handling
  * @namespace
  */
 class DataTypes {
 	static readString(buffer) {
-		return buffer.readString(64, "ascii").trim()
+		return CodePage437.from(buffer.readBuffer(64)).trim()
 	}
 	static readFixedShort(buffer) {
 		const data = buffer.readUInt16BE()
@@ -31,8 +32,9 @@ class DataTypes {
 		return (fraction | (integer << 5) | sign << 15)
 	}
 	static padString(string) {
-		const buffer = new SmartBuffer({ size: 64 }).writeString(string, "ascii")
-		buffer.writeString(" ".repeat(64 - buffer.writeOffset))
+		const buffer = new SmartBuffer({ size: 64 })
+		buffer.writeBuffer(CodePage437.to(string))
+		buffer.writeBuffer(Buffer.alloc(64 - buffer.writeOffset, 0x20))
 		return buffer.toBuffer()
 	}
 }
