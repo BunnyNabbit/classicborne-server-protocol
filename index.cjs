@@ -52,7 +52,7 @@ const extensions = [
 	{
 		name: "FullCP437",
 		version: 1,
-	}
+	},
 ]
 function isTrustedWebSocketProxy(remoteAddress) {
 	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy
@@ -71,7 +71,7 @@ class SocketImpostor extends EventEmitter {
 		})
 		this.buffer = new SmartBuffer()
 	}
-	/** Writes data to the WebSocket.
+	/**Writes data to the WebSocket.
 	 * @param {Buffer} buffer - The buffer to write.
 	 */
 	write(buffer) {
@@ -120,9 +120,7 @@ module.exports = class Server extends EventEmitter {
 				client.httpRequest = request
 			})
 			setTimeout(() => {
-				if (!client.authed) {
-					socket.destroy()
-				}
+				if (!client.authed) socket.destroy()
 			}, this.connectionTimeout)
 		})
 		this.utils = utils
@@ -157,9 +155,7 @@ module.exports = class Server extends EventEmitter {
 		}
 		switch (type) {
 			case 0x00:
-				if (socket.client.authed || socket.client.cpeNegotiating) {
-					return socket.destroy()
-				}
+				if (socket.client.authed || socket.client.cpeNegotiating) return socket.destroy()
 				const version = socket.buffer.readUInt8()
 				if (version !== 0x07) return socket.destroy()
 				const username = DataTypes.readString(socket.buffer)

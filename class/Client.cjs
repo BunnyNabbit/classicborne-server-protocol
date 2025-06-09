@@ -20,6 +20,7 @@ class Client extends EventEmitter {
 		this.cpeNegotiating = false
 		this.address = socket.remoteAddress
 	}
+
 	message(message, messageType = -1, continueAdornment = ">") {
 		const cp437Buffer = SmartBuffer.fromBuffer(CodePage437.to(message))
 		const continueAdornmentBuffer = CodePage437.to(continueAdornment)
@@ -34,6 +35,7 @@ class Client extends EventEmitter {
 			writeContinueAdornment = true
 		}
 	}
+
 	async loadLevel(data, x, y, z, processed = false, callback, preFinalize) {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
@@ -66,11 +68,13 @@ class Client extends EventEmitter {
 		this.socket.write(finalizeBuffer.toBuffer())
 		if (callback) callback()
 	}
+
 	disconnect(message) {
 		const buffer = new SmartBuffer({ size: 65 }).writeUInt8(0x0e).writeBuffer(CodePage437.to(message))
 		buffer.writeString(" ".repeat(65 - buffer.writeOffset))
 		this.socket.write(buffer.toBuffer())
 	}
+
 	configureSpawn(id, username, x, y, z, yaw, pitch) {
 		const buffer = new SmartBuffer({ size: 74 }).writeUInt8(0x07)
 		buffer.writeInt8(id)
@@ -82,6 +86,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	serverIdentification(serverName, motd, userType) {
 		const buffer = new SmartBuffer({ size: 131 }).writeUInt8(0x00).writeUInt8(0x07)
 		buffer.writeBuffer(DataTypes.padString(serverName))
@@ -89,6 +94,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(userType)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	setBlock(type, x, y, z) {
 		const buffer = new SmartBuffer({ size: 8 }).writeUInt8(0x06)
 		buffer.writeUInt16BE(x)
@@ -97,6 +103,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(type)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	absolutePositionUpdate(id, x, y, z, yaw, pitch) {
 		const buffer = new SmartBuffer({ size: 10 }).writeUInt8(0x08)
 		buffer.writeInt8(id)
@@ -107,11 +114,13 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	despawnPlayer(id) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0c)
 		buffer.writeInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	updateUserType(userType) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0f)
 		buffer.writeInt8(userType)
@@ -123,6 +132,7 @@ class Client extends EventEmitter {
 		buffer.writeInt16BE(distance)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	defineBlock(block) {
 		const buffer = new SmartBuffer({ size: 80 }).writeUInt8(0x23)
 		buffer.writeUInt8(block.id)
@@ -143,6 +153,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	defineBlockExt(block) {
 		const buffer = new SmartBuffer({ size: 88 }).writeUInt8(0x25)
 		buffer.writeUInt8(block.id)
@@ -171,26 +182,31 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	removeBlockDefinition(blockId) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x24)
 		buffer.writeUInt8(blockId)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	setInventoryOrder(id, order) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2c)
 		buffer.writeUInt8(order)
 		buffer.writeUInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	customBlockSupport(level) {
 		const blockSupportBuffer = new SmartBuffer({ size: 2 }).writeUInt8(0x13).writeUInt8(level)
 		this.socket.write(blockSupportBuffer.toBuffer())
 	}
+
 	texturePackUrl(url) {
 		const texturePackBuffer = new SmartBuffer({ size: 65 }).writeUInt8(0x28)
 		texturePackBuffer.writeBuffer(DataTypes.padString(url))
 		this.socket.write(texturePackBuffer.toBuffer())
 	}
+
 	setEnvironmentProperties(environment) {
 		for (const [key, value] of Object.entries(environment)) {
 			const propertyIndex = Client.environmentProperties.indexOf(key)
@@ -202,6 +218,7 @@ class Client extends EventEmitter {
 			}
 		}
 	}
+
 	setBlockPermission(id, allowPlacement, allowDeletion) {
 		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
 		blockPermissionBuffer.writeUInt8(id)
@@ -209,6 +226,7 @@ class Client extends EventEmitter {
 		blockPermissionBuffer.writeUInt8(allowDeletion)
 		this.socket.write(blockPermissionBuffer.toBuffer())
 	}
+
 	configureSpawnExt(id, username, x, y, z, yaw, pitch, skin) {
 		const buffer = new SmartBuffer({ size: 138 }).writeUInt8(0x21)
 		buffer.writeInt8(id)
@@ -221,6 +239,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	addPlayerName(id, username, listName, groupName = "", groupOrder = 0) {
 		const buffer = new SmartBuffer({ size: 196 }).writeUInt8(0x16)
 		buffer.writeInt16BE(id)
@@ -230,11 +249,13 @@ class Client extends EventEmitter {
 		buffer.writeUInt8(groupOrder)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	removePlayerName(id) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x18)
 		buffer.writeInt16BE(id)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	setEntityProperty(id, propertyType, value) {
 		const buffer = new SmartBuffer({ size: 7 }).writeUInt8(0x2a)
 		buffer.writeUInt8(id)
@@ -242,6 +263,7 @@ class Client extends EventEmitter {
 		buffer.writeUInt32BE(value)
 		this.socket.write(buffer.toBuffer())
 	}
+
 	setHotbar(blockId, hotbarIndex) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2d)
 		buffer.writeUInt8(blockId)

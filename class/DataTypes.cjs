@@ -4,9 +4,11 @@ const CodePage437 = require("./CodePage437.cjs")
  * @namespace
  */
 class DataTypes {
+
 	static readString(buffer) {
 		return CodePage437.from(buffer.readBuffer(64)).trim()
 	}
+
 	static readFixedShort(buffer) {
 		const data = buffer.readUInt16BE()
 		const fraction = (data << 27) >>> 27
@@ -19,6 +21,7 @@ class DataTypes {
 			return integer + (fraction / 32)
 		}
 	}
+
 	static fixedShort(num) {
 		const fraction = Math.abs((num - Math.trunc(num)) * 32)
 		let integer = Math.abs(Math.trunc(num))
@@ -31,6 +34,7 @@ class DataTypes {
 		}
 		return (fraction | (integer << 5) | sign << 15)
 	}
+	
 	static padString(string) {
 		const buffer = new SmartBuffer({ size: 64 })
 		buffer.writeBuffer(CodePage437.to(string))

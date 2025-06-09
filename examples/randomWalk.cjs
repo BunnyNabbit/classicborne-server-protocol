@@ -12,13 +12,16 @@ function randomWool() {
 }
 const walkOffsets = [[-1, 0, 0], [0, -1, 0], [0, 0, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
 class Walker {
+
 	constructor(client) {
 		this.client = client
 		this.randomizePosition()
 	}
+
 	randomizePosition() {
 		this.position = [randomIntFromInterval(0, bounds[0] - 1), randomIntFromInterval(0, bounds[1] - 1), randomIntFromInterval(0, bounds[2] - 1)]
 	}
+
 	tick() {
 		this.position = walkOffsets[randomIntFromInterval(0, walkOffsets.length - 1)].map((offset, index) => this.position[index] + offset)
 		if (!this.position.every((position, index) => position >= 0 && position < bounds[index])) this.randomizePosition()

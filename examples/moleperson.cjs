@@ -49,6 +49,7 @@ function randomIntFromInterval(min, max) {
 const wanderOffsets = [[1, 0, 0], [0, 0, 1], [-1, 0, 0], [0, 0, -1]]
 const gravity = [0, -1, 0]
 class Monster {
+
 	constructor(client) {
 		this.client = client
 		this.randomizePosition()
@@ -57,30 +58,38 @@ class Monster {
 		this.energy = 0
 		this.delay = 0
 	}
+
 	checkBlock(offset = [0, 0, 0]) {
 		if (this.position[1] === 0) return this.randomizePosition()
 		const checkPosition = offset.map((offset, index) => this.position[index] + offset)
 		return getBlock(this.client.level, checkPosition) !== 0
 	}
+
 	enforceBounds() {
 		if (!this.position.every((position, index) => position >= 0 && position < bounds[index])) this.randomizePosition()
 	}
+
 	wander() {
 		this.position = wanderOffsets[randomIntFromInterval(0, wanderOffsets.length - 1)].map((offset, index) => this.position[index] + offset)
 	}
+
 	fall() {
 		this.position = gravity.map((offset, index) => this.position[index] + offset)
 	}
+
 	setBlock(type, position) {
 		setBlock(this.client.level, position, type, (block, x, y, z) => { this.client.setBlock(block, x, y, z) })
 	}
+
 	update(previousLocation) {
 		if (previousLocation) this.setBlock(0, previousLocation)
 		this.setBlock(21, this.position)
 	}
+
 	randomizePosition() {
 		this.position = [randomIntFromInterval(0, bounds[0] - 1), randomIntFromInterval(0, bounds[1] - 1), randomIntFromInterval(0, bounds[2] - 1)]
 	}
+
 	tick() {
 		this.delay--
 		if (this.delay > 0) return

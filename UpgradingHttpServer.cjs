@@ -3,6 +3,7 @@ const { WebSocketServer } = require("ws")
 
 const http = require("http")
 class UpgradingHttpServer {
+
 	constructor() {
 		this.webSocketServer = new WebSocketServer({ noServer: true })
 		this.webSocketServer.on('connection', function connection(ws, req) {
@@ -24,6 +25,7 @@ class UpgradingHttpServer {
 			})
 		})
 	}
+
 	upgradeSocketToHttp(socket, head) {
 		const pass = new PassThrough()
 		const originalWrite = socket._write
