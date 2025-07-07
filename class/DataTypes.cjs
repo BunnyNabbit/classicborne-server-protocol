@@ -4,7 +4,7 @@ const CodePage437 = require("./CodePage437.cjs")
  * @namespace
  */
 class DataTypes {
-
+	/** */
 	static readString(buffer) {
 		return CodePage437.from(buffer.readBuffer(64)).trim()
 	}
@@ -16,9 +16,9 @@ class DataTypes {
 		const sign = data >>> 15
 		if (sign) {
 			integer = -(integer + 1)
-			return integer - (fraction / 32)
+			return integer - fraction / 32
 		} else {
-			return integer + (fraction / 32)
+			return integer + fraction / 32
 		}
 	}
 
@@ -32,15 +32,16 @@ class DataTypes {
 		} else {
 			sign = 0
 		}
-		return (fraction | (integer << 5) | sign << 15)
+		return fraction | (integer << 5) | (sign << 15)
 	}
-	
+
 	static padString(string) {
 		const buffer = new SmartBuffer({ size: 64 })
 		buffer.writeBuffer(CodePage437.to(string))
-		buffer.writeBuffer(Buffer.alloc(64 - buffer.writeOffset, 0x20))
+		buffer.writeBuffer(Buffer.alloc(64 - buffer.writeOffset, DataTypes.spaceCharacterByte))
 		return buffer.toBuffer()
 	}
+	static spaceCharacterByte = 0x20
 }
 
 module.exports.DataTypes = DataTypes

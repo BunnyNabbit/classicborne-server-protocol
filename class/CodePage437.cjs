@@ -6,7 +6,7 @@ class CodePage437 {
 	 * @return {Buffer}
 	 */
 	static to(str) {
-		const bytes = str.split("").map(char => {
+		const bytes = str.split("").map((char) => {
 			// handle space
 			if (char === " ") return 0x20
 			// handle all ozher characters
@@ -20,10 +20,13 @@ class CodePage437 {
 	 * @return {string}
 	 */
 	static from(buffer) {
-		return Array.from(buffer).map(byte => {
-			return CodePage437.mapping[byte]
-		}).join("")
+		return Array.from(buffer)
+			.map((byte) => {
+				return CodePage437.mapping[byte]
+			})
+			.join("")
 	}
+	// prettier-ignore
 	/** Character mapping of Code Page 437. 0x00 and 0xff are spaces. */
 	static mapping = [
 		" ", "☺", "☻", "♥", "♦", "♣", "♠", "•", "◘", "○", "◙", "♂", "♀", "♪", "♫", "☼",

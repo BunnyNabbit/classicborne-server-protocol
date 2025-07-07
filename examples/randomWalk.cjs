@@ -10,9 +10,16 @@ function randomIntFromInterval(min, max) {
 function randomWool() {
 	return randomIntFromInterval(21, 33)
 }
-const walkOffsets = [[-1, 0, 0], [0, -1, 0], [0, 0, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+const walkOffsets = [
+	[-1, 0, 0],
+	[0, -1, 0],
+	[0, 0, -1],
+	[1, 0, 0],
+	[0, 1, 0],
+	[0, 0, 1],
+]
 class Walker {
-
+	/** */
 	constructor(client) {
 		this.client = client
 		this.randomizePosition()
@@ -36,7 +43,7 @@ server.on("clientConnected", async (client, authInfo) => {
 		const walkers = [new Walker(client), new Walker(client), new Walker(client), new Walker(client), new Walker(client)]
 		const interval = setInterval(() => {
 			if (client.socket.destroyed) return clearInterval(interval)
-			walkers.forEach(walker => walker.tick())
+			walkers.forEach((walker) => walker.tick())
 		}, 50)
 	})
 })

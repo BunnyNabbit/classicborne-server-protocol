@@ -4,11 +4,11 @@
 const Server = require("classicborne-server-protocol")
 const server = new Server(25565)
 const playerSpamNames = ["gimpy", "great", "civil", "clayprism"]
-const fs = require('fs')
-const nbt = require('nbt')
+const fs = require("fs")
+const nbt = require("nbt")
 
 let level = null
-nbt.parse(fs.readFileSync('./reallygreat.cw'), function (error, data) {
+nbt.parse(fs.readFileSync("./reallygreat.cw"), function (error, data) {
 	if (error) throw error
 	level = {
 		blockTypes: Buffer.from(data.value.BlockArray.value),
@@ -16,7 +16,7 @@ nbt.parse(fs.readFileSync('./reallygreat.cw'), function (error, data) {
 			x: data.value.X.value,
 			y: data.value.Y.value,
 			z: data.value.Z.value,
-		}
+		},
 	}
 })
 
@@ -28,13 +28,15 @@ server.on("clientConnected", (client, authInfo) => {
 		client.message("&aYou've been here 1 times!", 0)
 		client.loadLevel(level.blockTypes, level.bounds.x, level.bounds.y, level.bounds.z)
 		client.configureSpawn(0, authInfo.username)
-		setTimeout(() => { // begin troll
+		setTimeout(() => {
+			// begin troll
 			setTimeout(() => {
 				// teleport to other room
 			}, 500)
 		}, 1500)
 	}, 3000)
-	client.on("message", (message) => { // begin spam unless automated command (Hey! WTF!)
+	client.on("message", (message) => {
+		// begin spam unless automated command (Hey! WTF!)
 		if (message.includes("/")) return // might be command. ignore that.
 		client.message(`${authInfo.username}: ` + message, 0)
 		for (let i = 0; i < 32; i++) {

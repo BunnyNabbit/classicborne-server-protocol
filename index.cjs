@@ -140,7 +140,7 @@ module.exports = class Server extends EventEmitter {
 	/**Handles incoming TCP packets from the client.
 	 * @param {Socket} socket - The socket of the client.
 	 * @param {Buffer} data - The data received from the client.
-	 * @returns 
+	 * @returns
 	 */
 	static tcpPacketHandler(socket, data) {
 		if (data) socket.buffer.writeBuffer(data)
@@ -182,13 +182,16 @@ module.exports = class Server extends EventEmitter {
 					socket.client.once("extensions", (extensions) => {
 						socket.client.authed = true
 						socket.client.server.emit("clientConnected", socket.client, {
-							username, key, extensions
+							username,
+							key,
+							extensions,
 						})
 					})
 				} else {
 					socket.client.authed = true
 					socket.client.server.emit("clientConnected", socket.client, {
-						username, key
+						username,
+						key,
 					})
 				}
 				break
@@ -240,7 +243,7 @@ module.exports = class Server extends EventEmitter {
 				socket.client.cpeExtensions.push(extension)
 				if (socket.client.cpeExtensionsCount == socket.client.cpeExtensions.length) socket.client.emit("extensions", socket.client.cpeExtensions)
 				break
-			case 0x13: // CustomBlockSupportLevel 
+			case 0x13: // CustomBlockSupportLevel
 				const customBlocksSupportLevel = socket.buffer.readUInt8()
 				if (socket.client.customBlockSupport != null) {
 					socket.client.customBlockSupport = customBlocksSupportLevel

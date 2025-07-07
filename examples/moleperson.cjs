@@ -1,6 +1,6 @@
 // Moleperson game
 
-const { createNoise2D, createNoise3D } = require('simplex-noise');
+const { createNoise2D, createNoise3D } = require("simplex-noise")
 const Server = require("classicborne-server-protocol")
 const server = new Server(25565)
 
@@ -16,7 +16,7 @@ function createTerrain(params = { baseLayerScale: 0.01, amplifierLayerScale: 0.0
 	const carverLayer = createNoise3D()
 	for (let x = 0; x < bounds[0]; x++) {
 		for (let z = 0; z < bounds[2]; z++) {
-			const columnHeight = clamp(Math.floor((((baseLayer(x * params.baseLayerScale, z * params.baseLayerScale) + 8) * 12) * Math.max(amplifierLayer(x * params.amplifierLayerScale, z * params.amplifierLayerScale) * 2, 0.9)) + (weirdLayer(x * params.weirdLayerScale, z * params.weirdLayerScale) * 5)), 4, bounds[1])
+			const columnHeight = clamp(Math.floor((baseLayer(x * params.baseLayerScale, z * params.baseLayerScale) + 8) * 12 * Math.max(amplifierLayer(x * params.amplifierLayerScale, z * params.amplifierLayerScale) * 2, 0.9) + weirdLayer(x * params.weirdLayerScale, z * params.weirdLayerScale) * 5), 4, bounds[1])
 			for (let y = 0; y < columnHeight; y++) {
 				const carve = carverLayer(x * params.carverLayerScale, y * params.carverLayerScale, z * params.carverLayerScale)
 				if (carve < 0.5) {
@@ -33,7 +33,7 @@ function createTerrain(params = { baseLayerScale: 0.01, amplifierLayerScale: 0.0
 	}
 	return levelBuffer
 }
-const noop = () => { }
+const noop = () => {}
 function setBlock(level, position, block, clientWrite = noop) {
 	level.writeUInt8(block, position[0] + bounds[2] * (position[2] + bounds[0] * position[1]))
 	clientWrite(block, position[0], position[1], position[2])
@@ -46,10 +46,15 @@ function randomIntFromInterval(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const wanderOffsets = [[1, 0, 0], [0, 0, 1], [-1, 0, 0], [0, 0, -1]]
+const wanderOffsets = [
+	[1, 0, 0],
+	[0, 0, 1],
+	[-1, 0, 0],
+	[0, 0, -1],
+]
 const gravity = [0, -1, 0]
 class Monster {
-
+	/** */
 	constructor(client) {
 		this.client = client
 		this.randomizePosition()
@@ -78,7 +83,9 @@ class Monster {
 	}
 
 	setBlock(type, position) {
-		setBlock(this.client.level, position, type, (block, x, y, z) => { this.client.setBlock(block, x, y, z) })
+		setBlock(this.client.level, position, type, (block, x, y, z) => {
+			this.client.setBlock(block, x, y, z)
+		})
 	}
 
 	update(previousLocation) {
@@ -128,7 +135,7 @@ server.on("clientConnected", async (client, authInfo) => {
 		}
 		const interval = setInterval(() => {
 			if (client.socket.destroyed) return clearInterval(interval)
-			monsters.forEach(monster => monster.tick())
+			monsters.forEach((monster) => monster.tick())
 		}, 50)
 	})
 })
