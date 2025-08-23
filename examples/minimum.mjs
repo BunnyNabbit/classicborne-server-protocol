@@ -1,5 +1,5 @@
 // Bare minimum server operation
-const Server = require("classicborne-server-protocol")
+import { Server } from "classicborne-server-protocol"
 const server = new Server(25565)
 
 const bounds = { x: 512, y: 512, z: 512 }

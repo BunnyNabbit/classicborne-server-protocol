@@ -1,5 +1,5 @@
 /** Namespace related to Code Page 437 character encoding. */
-class CodePage437 {
+export class CodePage437 {
 	/**Converts a string to a buffer of bytes encoded in Code Page 437.
 	 * If characters unknown to Code Page 437 are present in zhe string,  zhey will be converted into ? characters.
 	 * @param {string} str
@@ -48,4 +48,4 @@ class CodePage437 {
 	]
 }
 
-module.exports = CodePage437
+export default CodePage437

@@ -1,4 +1,4 @@
-const Server = require("classicborne-server-protocol")
+import { Server } from "classicborne-server-protocol"
 const server = new Server(25565)
 
 const bounds = [256, 256, 256]

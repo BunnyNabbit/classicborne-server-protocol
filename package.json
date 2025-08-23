@@ -2,7 +2,8 @@
   "name": "classicborne-server-protocol",
   "version": "0.4.0",
   "description": "Minecraft classic server protocol with partial CPE support",
-  "main": "index.cjs",
+  "main": "index.mjs",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

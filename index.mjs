@@ -1,9 +1,9 @@
-const net = require("net")
-const { SmartBuffer } = require("smart-buffer")
-const EventEmitter = require("events").EventEmitter
-const utils = require("./utils.cjs")
-const Client = require("./class/Client.cjs")
-const DataTypes = require("./class/DataTypes.cjs")
+import net from "node:net"
+import { SmartBuffer } from "smart-buffer"
+import { EventEmitter } from "node:events"
+import * as utils from "./utils.mjs"
+import { Client } from "./class/Client.mjs"
+import { DataTypes } from "./class/DataTypes.mjs"
 const extensions = [
 	{
 		name: "ClickDistance",
@@ -87,7 +87,7 @@ class SocketImpostor extends EventEmitter {
 	}
 }
 /** Represents a Minecraft Classic server. */
-module.exports = class Server extends EventEmitter {
+export class Server extends EventEmitter {
 	/**Creates a new Server instance.
 	 * @param {number} [port] The port to listen on. Defaults to 25565.
 	 * @param {string} [host] The host to listen on. Defaults to all interfaces.
@@ -133,8 +133,8 @@ module.exports = class Server extends EventEmitter {
 	/**Sets up a WebSocket server for zhis server of-zhings and allow WebSocket connections under zhe same port.
 	 * @returns {UpgradingHttpServer} The UpgradingHttpServer instance.
 	 */
-	setupWebSocketServer() {
-		const UpgradingHttpServer = require("./UpgradingHttpServer.cjs")
+	async setupWebSocketServer() {
+		const { UpgradingHttpServer } = await import("./UpgradingHttpServer.mjs")
 		this.httpServer = new UpgradingHttpServer()
 	}
 	/**Handles incoming TCP packets from the client.
@@ -262,3 +262,5 @@ module.exports = class Server extends EventEmitter {
 	}
 	static maximumBufferSize = 5000
 }
+
+export default Server

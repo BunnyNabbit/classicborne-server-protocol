@@ -1,9 +1,9 @@
-const { SmartBuffer } = require("smart-buffer")
-const CodePage437 = require("./CodePage437.cjs")
+import { SmartBuffer } from "smart-buffer"
+import { CodePage437 } from "./CodePage437.mjs"
 /**Namespace for data type handling
  * @namespace
  */
-class DataTypes {
+export class DataTypes {
 	/** */
 	static readString(buffer) {
 		return CodePage437.from(buffer.readBuffer(64)).trim()
@@ -44,5 +44,4 @@ class DataTypes {
 	static spaceCharacterByte = 0x20
 }
 
-module.exports.DataTypes = DataTypes
-module.exports = DataTypes
+export default DataTypes

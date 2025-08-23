@@ -1,11 +1,11 @@
-const DataTypes = require("./DataTypes.cjs")
-const utils = require("../utils.cjs")
-const { EventEmitter } = require("events")
-const { SmartBuffer } = require("smart-buffer")
-const CodePage437 = require("./CodePage437.cjs")
+import { DataTypes } from "./DataTypes.mjs"
+import * as utils from "../utils.mjs"
+import { EventEmitter } from "node:events"
+import { SmartBuffer } from "smart-buffer"
+import { CodePage437 } from "./CodePage437.mjs"
 
 /** Represents a client */
-class Client extends EventEmitter {
+export class Client extends EventEmitter {
 	/**Creates a Client instance
 	 * @param {Socket} socket - The socket of the client
 	 * @param {Server} server - The server instance
@@ -276,9 +276,8 @@ class Client extends EventEmitter {
 		0x0d: 66,
 		0x08: 10,
 		0x05: 9,
-		0x47: 1
+		0x47: 1,
 	}
 }
 
-module.exports.Client = Client
-module.exports = Client
+export default Client

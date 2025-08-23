@@ -1,11 +1,11 @@
 // The following scene is based on an animation that portrayed the Not Awesome 2 server.
 // In the animation, the player spawns in front of another player, who seemingly trolls the player by destroying the block below them.
 // The player is now located in a different level, where they then proceed to say "Hey! WTF!" in the chat. This gets followed by the player getting spammed by messages saying "gimp" and then getting kicked with a message saying "who's shie xD?", likely referring to an alt account as suggested by another animation.
-const Server = require("classicborne-server-protocol")
+import { Server } from "classicborne-server-protocol"
+import fs from "node:fs"
+import nbt from "nbt"
 const server = new Server(25565)
 const playerSpamNames = ["gimpy", "great", "civil", "clayprism"]
-const fs = require("fs")
-const nbt = require("nbt")
 
 let level = null
 nbt.parse(fs.readFileSync("./reallygreat.cw"), function (error, data) {

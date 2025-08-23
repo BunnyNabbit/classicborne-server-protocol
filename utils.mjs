@@ -1,7 +1,7 @@
-const SmartBuffer = require("smart-buffer").SmartBuffer
-const gzip = require("zlib").gzip
+import { SmartBuffer } from "smart-buffer"
+import { gzip } from "node:zlib"
 
-function processLevel(data, x, y, z) {
+export function processLevel(data, x, y, z) {
 	return new Promise((resolve) => {
 		let compressedPayloadBuffer = new SmartBuffer({ size: data.length + 4 })
 		compressedPayloadBuffer.writeInt32BE(x * y * z)
@@ -11,8 +11,4 @@ function processLevel(data, x, y, z) {
 			resolve(result)
 		})
 	})
-}
-
-module.exports = {
-	processLevel,
 }

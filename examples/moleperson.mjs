@@ -1,7 +1,7 @@
 // Moleperson game
 
-const { createNoise2D, createNoise3D } = require("simplex-noise")
-const Server = require("classicborne-server-protocol")
+import { createNoise2D, createNoise3D } from "simplex-noise"
+import { Server } from "classicborne-server-protocol"
 const server = new Server(25565)
 
 const bounds = [256, 256, 256]

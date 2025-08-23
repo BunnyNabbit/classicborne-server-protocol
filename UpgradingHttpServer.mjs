@@ -1,8 +1,8 @@
-const { PassThrough } = require("stream").Duplex
-const { WebSocketServer } = require("ws")
+import { PassThrough } from "node:stream"
+import { WebSocketServer } from "ws"
+import http from "node:http"
 
-const http = require("http")
-class UpgradingHttpServer {
+export class UpgradingHttpServer {
 	/** */
 	constructor() {
 		this.webSocketServer = new WebSocketServer({ noServer: true })
@@ -47,4 +47,4 @@ class UpgradingHttpServer {
 	}
 }
 
-module.exports = UpgradingHttpServer
+export default UpgradingHttpServer
