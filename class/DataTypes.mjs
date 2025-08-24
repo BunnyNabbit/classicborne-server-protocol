@@ -11,28 +11,18 @@ export class DataTypes {
 
 	static readFixedShort(buffer) {
 		const data = buffer.readUInt16BE()
-		const fraction = (data << 27) >>> 27
-		let integer = (data << 17) >>> 22
-		const sign = data >>> 15
-		if (sign) {
-			integer = -(integer + 1)
-			return integer - fraction / 32
+		if (data & 0x8000) {
+			return -((~data & 0xffff) + 1) / 32
 		} else {
-			return integer + fraction / 32
+			return data / 32
 		}
 	}
 
 	static fixedShort(num) {
-		const fraction = Math.abs((num - Math.trunc(num)) * 32)
-		let integer = Math.abs(Math.trunc(num))
-		let sign
-		if (Math.sign(num) == -1) {
-			sign = 1
-			integer = Math.max(integer - 1, 0)
-		} else {
-			sign = 0
-		}
-		return fraction | (integer << 5) | (sign << 15)
+		let multipliedValue = Math.round(num * 32)
+		let bitwiseResult = multipliedValue & 0b111111111111111
+		if (Math.sign(multipliedValue) == -1) bitwiseResult |= 0b1000000000000000
+		return bitwiseResult
 	}
 
 	static padString(string) {
