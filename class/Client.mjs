@@ -3,6 +3,7 @@ import * as utils from "../utils.mjs"
 import { EventEmitter } from "node:events"
 import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
+/** @typedef {import("./TeleportBehavior.mjs").TeleportBehavior TeleportBehavior} */
 
 /** Represents a client */
 export class Client extends EventEmitter {
@@ -268,6 +269,26 @@ export class Client extends EventEmitter {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2d)
 		buffer.writeUInt8(blockId)
 		buffer.writeUInt8(hotbarIndex)
+		this.socket.write(buffer.toBuffer())
+	}
+	/**
+	 * @param {number} id 
+	 * @param {number} x 
+	 * @param {number} y 
+	 * @param {number} z 
+	 * @param {number} yaw 
+	 * @param {number} pitch 
+	 * @param {TeleportBehavior} teleportBehavior 
+	 */
+	extendedPositionUpdate(id, x, y, z, yaw, pitch, teleportBehavior) {
+		const buffer = new SmartBuffer({ size: 11 }).writeUInt8(0x36)
+		buffer.writeInt8(id)
+		buffer.writeBuffer(teleportBehavior.toBuffer())
+		buffer.writeUInt16BE(DataTypes.fixedShort(x))
+		buffer.writeUInt16BE(DataTypes.fixedShort(y))
+		buffer.writeUInt16BE(DataTypes.fixedShort(z))
+		buffer.writeUInt8(yaw)
+		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
 	static environmentProperties = ["sidesId", "edgeId", "edgeHeight", "cloudsHeight", "maxFog", "cloudsSpeed", "weatherFade", "useExponentialFog", "sidesOffset"]
