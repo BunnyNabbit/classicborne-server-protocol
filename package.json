@@ -8,8 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-docs": "typedoc"
   },
-  "author": "",
+  "author": "BunnyNabbit \"Aon Langton\"",
   "license": "MIT",
+  "homepage": "https://bunnynabbit.github.io/classicborne-server-protocol/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BunnyNabbit/classicborne-server-protocol.git"
