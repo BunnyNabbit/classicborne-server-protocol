@@ -3,7 +3,7 @@ import * as utils from "../utils.mjs"
 import { EventEmitter } from "node:events"
 import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
-/** @typedef {import("./TeleportBehavior.mjs").TeleportBehavior TeleportBehavior} */
+/** @import { TeleportBehavior } from "./TeleportBehavior.mjs" */
 
 /** Represents a client */
 export class Client extends EventEmitter {
