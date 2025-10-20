@@ -1,12 +1,16 @@
 import { DataTypes } from "./DataTypes.mjs"
 import * as utils from "../utils.mjs"
-import { EventEmitter } from "node:events"
+import { TypedEmitter } from "tiny-typed-emitter"
 import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
 /** @import { TeleportBehavior } from "./TeleportBehavior.mjs" */
+/** @import { extension } from "../types.mts" */
+/** @import { Server, Socket } from "node:net" */
 
-/** Represents a client */
-export class Client extends EventEmitter {
+/**Represents a client.
+ * @extends {TypedEmitter<{"extensions": (extensions: extension[]) => void}>}
+ */
+export class Client extends TypedEmitter {
 	/**Creates a Client instance
 	 * @param {Socket} socket - The socket of the client
 	 * @param {Server} server - The server instance
@@ -20,6 +24,9 @@ export class Client extends EventEmitter {
 		this.authed = false
 		this.cpeNegotiating = false
 		this.address = socket.remoteAddress
+		this.httpRequest = undefined
+		/** @type {extension[]} */
+		this.cpeExtensions
 	}
 
 	message(message, messageType = -1, continueAdornment = ">") {
@@ -272,13 +279,13 @@ export class Client extends EventEmitter {
 		this.socket.write(buffer.toBuffer())
 	}
 	/**
-	 * @param {number} id 
-	 * @param {number} x 
-	 * @param {number} y 
-	 * @param {number} z 
-	 * @param {number} yaw 
-	 * @param {number} pitch 
-	 * @param {TeleportBehavior} teleportBehavior 
+	 * @param {number} id
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} z
+	 * @param {number} yaw
+	 * @param {number} pitch
+	 * @param {TeleportBehavior} teleportBehavior
 	 */
 	extendedPositionUpdate(id, x, y, z, yaw, pitch, teleportBehavior) {
 		const buffer = new SmartBuffer({ size: 11 }).writeUInt8(0x36)

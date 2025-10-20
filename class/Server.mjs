@@ -1,9 +1,12 @@
 import net from "node:net"
 import { SmartBuffer } from "smart-buffer"
-import { EventEmitter } from "node:events"
-import * as utils from "./utils.mjs"
-import { Client } from "./class/Client.mjs"
-import { DataTypes } from "./class/DataTypes.mjs"
+import { TypedEmitter } from "tiny-typed-emitter"
+import * as utils from "../utils.mjs"
+import { Client } from "./Client.mjs"
+import { DataTypes } from "./DataTypes.mjs"
+/** @import { extension } from "../types.mts" */
+
+/** @type {extension[]} */
 const extensions = [
 	{
 		name: "ClickDistance",
@@ -63,7 +66,7 @@ function isTrustedWebSocketProxy(remoteAddress) {
 	return false
 }
 /** Impostor for WebSocket to make it compatible with the TCP server. */
-class SocketImpostor extends EventEmitter {
+class SocketImpostor extends TypedEmitter {
 	/**Creates a new SocketImpostor instance.
 	 * @param {WebSocket} websocket - The WebSocket to wrap.
 	 */
@@ -90,8 +93,10 @@ class SocketImpostor extends EventEmitter {
 		this.websocket.close()
 	}
 }
-/** Represents a Minecraft Classic server. */
-export class Server extends EventEmitter {
+/**Represents a Minecraft Classic server.
+ * @extends {TypedEmitter<{"clientConnected": (player: Client, authInfo: {username: string, key: string, extensions: extension[]?}) => void}>}
+ */
+export class Server extends TypedEmitter {
 	/**Creates a new Server instance.
 	 * @param {number} [port] The port to listen on. Defaults to 25565.
 	 * @param {string} [host] The host to listen on. Defaults to all interfaces.
@@ -135,11 +140,12 @@ export class Server extends EventEmitter {
 		this.connectionTimeout = 30 * 1000
 	}
 	/**Sets up a WebSocket server and allow WebSocket connections under the same port.
-	 * @returns {UpgradingHttpServer} The UpgradingHttpServer instance.
+	 * @returns {Promise<UpgradingHttpServer>} The UpgradingHttpServer instance.
 	 */
 	async setupWebSocketServer() {
 		const { UpgradingHttpServer } = await import("./UpgradingHttpServer.mjs")
 		this.httpServer = new UpgradingHttpServer()
+		return this.httpServer
 	}
 	/**Handles incoming TCP packets from the client.
 	 * @param {Socket} socket - The socket of the client.

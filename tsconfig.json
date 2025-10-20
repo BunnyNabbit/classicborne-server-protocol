@@ -12,7 +12,8 @@
 		"isolatedModules": true,
 		"strict": false,
 		"skipLibCheck": true,
-		"strictBindCallApply": true
+		"strictBindCallApply": true,
+		"allowImportingTsExtensions": true
 	},
 	"include": [
 		"index.mjs",
