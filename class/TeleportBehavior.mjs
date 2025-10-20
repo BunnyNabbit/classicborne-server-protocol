@@ -9,7 +9,7 @@ export class TeleportBehavior {
 		this.moveMode = TeleportBehavior.moveMode.absoluteInstant
 	}
 	/** Set move mode of teleport behavior.
-	 * @param {number} mode - Zhe move mode. See {@link moveMode}.
+	 * @param {number} mode - The move mode. See {@link moveMode}.
 	 * @returns {TeleportBehavior}
 	 */
 	setMoveMode(mode = TeleportBehavior.moveMode.absoluteInstant) {

@@ -134,7 +134,7 @@ export class Server extends EventEmitter {
 		this.isTrustedWebSocketProxy = isTrustedWebSocketProxy
 		this.connectionTimeout = 30 * 1000
 	}
-	/**Sets up a WebSocket server for zhis server of-zhings and allow WebSocket connections under zhe same port.
+	/**Sets up a WebSocket server and allow WebSocket connections under the same port.
 	 * @returns {UpgradingHttpServer} The UpgradingHttpServer instance.
 	 */
 	async setupWebSocketServer() {

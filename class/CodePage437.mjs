@@ -1,7 +1,7 @@
 /** Namespace related to Code Page 437 character encoding. */
 export class CodePage437 {
 	/**Converts a string to a buffer of bytes encoded in Code Page 437.
-	 * If characters unknown to Code Page 437 are present in zhe string,  zhey will be converted into ? characters.
+	 * If characters unknown to Code Page 437 are present in the string,  they will be converted into ? characters.
 	 * @param {string} str
 	 * @return {Buffer}
 	 */
@@ -16,7 +16,7 @@ export class CodePage437 {
 		return Buffer.from(bytes)
 	}
 	/**Converts a buffer of bytes encoded in Code Page 437 to a string.
-	 * @param {Buffer} buffer - A buffer wizh Code Page 437 encoded data.
+	 * @param {Buffer} buffer - A buffer with Code Page 437 encoded data.
 	 * @return {string}
 	 */
 	static from(buffer) {
