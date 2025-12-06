@@ -5,7 +5,8 @@ import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
 /** @import { TeleportBehavior } from "./TeleportBehavior.mjs" */
 /** @import { extension } from "../types.mts" */
-/** @import { Server, Socket } from "node:net" */
+/** @import { Server } from "./Server.mjs" */
+/** @import { Socket } from "node:net" */
 
 /**I represent a client to act on a Server instance.  
  * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will destroy me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
