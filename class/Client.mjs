@@ -7,7 +7,14 @@ import { CodePage437 } from "./CodePage437.mjs"
 /** @import { extension } from "../types.mts" */
 /** @import { Server, Socket } from "node:net" */
 
-/**Represents a client.
+/**I represent a client to act on a Server instance.  
+ * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will destroy me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
+ * 
+ * But if authentication succeeds, the server will emit a "clientConnected" event. This by itself won't do much because I still need an implementation of Minecraft Classic. Whoever seeing this can interpret that as they will. It's never argued what makes a Minecraft Classic server. But based on other implementations, it's based on using all available packets, such as chat messages, level downloads and block changes. `classicborne-server-protocol` is intended to be a low-level network library, so it doesn't come with Minecraft-like systems. For a batteries included server software, check out [`classicborne`](https://classicborne.bunnynabbit.com/).
+ * 
+ * My socket may be either TCP or WebSocket-based. It will be expected that the network layer used will be whatever. For this reason, I provide {@link Client#address} for getting the socket's address.
+ * 
+ * Right now, my packets are handled by the server class. But it is expected that this may change later.
  * @extends {TypedEmitter<{"extensions": (extensions: extension[]) => void}>}
  */
 export class Client extends TypedEmitter {
@@ -23,6 +30,7 @@ export class Client extends TypedEmitter {
 		this.packetSizes = JSON.parse(JSON.stringify(Client.defaultPacketSizes))
 		this.authed = false
 		this.cpeNegotiating = false
+		/** The remote address of the client. This can be either the TCP socket address or the address resolved on WebSocket. For WebSockets, it's based on trust. There's the ClassiCube proxy and all of its forwarded addresses are trusted and will be used as the address. But if a proxy isn't trusted, it assumes that the proxy is a client and uses the proxy's address instead. */
 		this.address = socket.remoteAddress
 		this.httpRequest = undefined
 		/** @type {extension[]} */
