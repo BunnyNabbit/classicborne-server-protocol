@@ -7,14 +7,12 @@ import { CodePage437 } from "./CodePage437.mjs"
 export class DataTypes {
 	/**@todo Yet to be documented.
 	 * @param {SmartBuffer} buffer 
-	 * @returns 
 	 */
 	static readString(buffer) {
 		return CodePage437.from(buffer.readBuffer(64)).trim()
 	}
 	/**@todo Yet to be documented.
 	 * @param {SmartBuffer} buffer 
-	 * @returns 
 	 */
 	static readFixedShort(buffer) {
 		const data = buffer.readUInt16BE()
@@ -26,7 +24,6 @@ export class DataTypes {
 	}
 	/**@todo Yet to be documented.
 	 * @param {number} number 
-	 * @returns 
 	 */
 	static fixedShort(number) {
 		let multipliedValue = Math.round(number * 32)
@@ -36,7 +33,7 @@ export class DataTypes {
 	}
 	/**@todo Yet to be documented.
 	 * @param {string} string 
-	 * @returns 
+	 * @returns {Buffer}
 	 */
 	static padString(string) {
 		const buffer = new SmartBuffer({ size: 64 })
