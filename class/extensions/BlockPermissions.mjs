@@ -1,6 +1,5 @@
 // @ts-check
 import { SmartBuffer } from "smart-buffer"
-import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
 /** @import { Client } from "../Client.mjs" */
 

@@ -1,6 +1,5 @@
 // @ts-check
 import { BasePacketHandler } from "../../BasePacketHandler.mjs"
-import { DataTypes } from "../../DataTypes.mjs"
 /** @import { SmartBuffer } from "smart-buffer" */
 /** @import { Client } from "../../Client.mjs" */
 /**I handle CPE identification packets from the client.*/
