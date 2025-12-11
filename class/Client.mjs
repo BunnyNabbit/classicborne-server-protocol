@@ -3,9 +3,13 @@ import * as utils from "../utils.mjs"
 import { TypedEmitter } from "tiny-typed-emitter"
 import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
+import { ExtensionManager } from "./ExtensionManager.mjs"
+import { DeprecationWarning } from "./DeprecationWarning.mjs"
+import { vanillaPacketHandlers } from "./vanillaPacketHandlers/index.mjs"
+/** @import { BasePacketHandler } from "./BasePacketHandler.mjs" */
 /** @import { TeleportBehavior } from "./TeleportBehavior.mjs" */
 /** @import { extension } from "../types.mts" */
-/** @import { Server } from "./Server.mjs" */
+/** @import { Server, SocketImpostor } from "./Server.mjs" */
 /** @import { Socket } from "node:net" */
 
 /**I represent a client to act on a Server instance.  
@@ -16,26 +20,41 @@ import { CodePage437 } from "./CodePage437.mjs"
  * My socket may be either TCP or WebSocket-based. It will be expected that the network layer used will be whatever. For this reason, I provide {@link Client#address} for getting the socket's address.
  * 
  * Right now, my packets are handled by the server class. But it is expected that this may change later.
- * @extends {TypedEmitter<{"extensions": (extensions: extension[]) => void}>}
+ * @extends {TypedEmitter<{"extensions": (extensions: extension[]) => void; "close": () => void }>}
  */
 export class Client extends TypedEmitter {
 	/**Creates a Client instance
-	 * @param {Socket} socket - The socket of the client
+	 * @param {Socket|SocketImpostor} socket - The socket of the client
 	 * @param {Server} server - The server instance
 	 */
 	constructor(socket, server) {
 		super()
+		/** @type {Socket|SocketImpostor} */
 		this.socket = socket
 		this.server = server
 		this.usingWebSocket = false
-		this.packetSizes = JSON.parse(JSON.stringify(Client.defaultPacketSizes))
 		this.authed = false
 		this.cpeNegotiating = false
 		/** The remote address of the client. This can be either the TCP socket address or the address resolved on WebSocket. For WebSockets, it's based on trust. There's the ClassiCube proxy and all of its forwarded addresses are trusted and will be used as the address. But if a proxy isn't trusted, it assumes that the proxy is a client and uses the proxy's address instead. */
+		// @ts-ignore
 		this.address = socket.remoteAddress
 		this.httpRequest = undefined
-		/** @type {extension[]} */
+		this.getChecked = false
+		this.appName = ""
+		this.cpeExtensionsCount = 0
+		/**
+		 * @type {extension[]}
+		 * @deprecated Use {@link Client#extensions}.
+		 */
 		this.cpeExtensions
+		/** @type {ExtensionManager} */
+		this.extensions = new ExtensionManager(this)
+		/** @type {Map<number, BasePacketHandler>} */
+		this.packetHandlers = new Map()
+		vanillaPacketHandlers.forEach((handlerClass) => {
+			const handler = new handlerClass(this)
+			this.packetHandlers.set(handler.packetId, handler)
+		})
 	}
 
 	message(message, messageType = -1, continueAdornment = ">") {
@@ -144,13 +163,19 @@ export class Client extends TypedEmitter {
 		this.socket.write(buffer.toBuffer())
 	}
 	// Extensions
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setClickDistance(distance) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x12)
 		buffer.writeInt16BE(distance)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	defineBlock(block) {
+		DeprecationWarning.warn("defineBlock", "Client#defineBlock is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 80 }).writeUInt8(0x23)
 		buffer.writeUInt8(block.id)
 		buffer.writeBuffer(DataTypes.padString(block.name ?? ""))
@@ -170,8 +195,11 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	defineBlockExt(block) {
+		DeprecationWarning.warn("defineBlockExt", "Client#defineBlockExt is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 88 }).writeUInt8(0x25)
 		buffer.writeUInt8(block.id)
 		buffer.writeBuffer(DataTypes.padString(block.name ?? ""))
@@ -199,32 +227,47 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	removeBlockDefinition(blockId) {
+		DeprecationWarning.warn("removeBlockDefinition", "Client#removeBlockDefinition is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x24)
 		buffer.writeUInt8(blockId)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setInventoryOrder(id, order) {
+		DeprecationWarning.warn("setInventoryOrder", "Client#setInventoryOrder is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2c)
 		buffer.writeUInt8(order)
 		buffer.writeUInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	customBlockSupport(level) {
+		DeprecationWarning.warn("customBlockSupport", "Client#customBlockSupport is deprecated. Use the extension instead.")
 		const blockSupportBuffer = new SmartBuffer({ size: 2 }).writeUInt8(0x13).writeUInt8(level)
 		this.socket.write(blockSupportBuffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	texturePackUrl(url) {
+		DeprecationWarning.warn("texturePackUrl", "Client#texturePackUrl is deprecated. Use the extension instead.")
 		const texturePackBuffer = new SmartBuffer({ size: 65 }).writeUInt8(0x28)
 		texturePackBuffer.writeBuffer(DataTypes.padString(url))
 		this.socket.write(texturePackBuffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setEnvironmentProperties(environment) {
+		DeprecationWarning.warn("setEnvironmentProperties", "Client#setEnvironmentProperties is deprecated. Use the extension instead.")
 		for (const [key, value] of Object.entries(environment)) {
 			const propertyIndex = Client.environmentProperties.indexOf(key)
 			if (propertyIndex !== -1) {
@@ -235,16 +278,22 @@ export class Client extends TypedEmitter {
 			}
 		}
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setBlockPermission(id, allowPlacement, allowDeletion) {
+		DeprecationWarning.warn("setBlockPermission", "Client#setBlockPermission is deprecated. Use the extension instead.")
 		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
 		blockPermissionBuffer.writeUInt8(id)
 		blockPermissionBuffer.writeUInt8(allowPlacement)
 		blockPermissionBuffer.writeUInt8(allowDeletion)
 		this.socket.write(blockPermissionBuffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	configureSpawnExt(id, username, x, y, z, yaw, pitch, skin) {
+		DeprecationWarning.warn("configureSpawnExt", "Client#configureSpawnExt is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 138 }).writeUInt8(0x21)
 		buffer.writeInt8(id)
 		buffer.writeBuffer(DataTypes.padString(username))
@@ -256,8 +305,11 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	addPlayerName(id, username, listName, groupName = "", groupOrder = 0) {
+		DeprecationWarning.warn("addPlayerName", "Client#addPlayerName is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 196 }).writeUInt8(0x16)
 		buffer.writeInt16BE(id)
 		buffer.writeBuffer(DataTypes.padString(username))
@@ -266,22 +318,31 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(groupOrder)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	removePlayerName(id) {
+		DeprecationWarning.warn("removePlayerName", "Client#removePlayerName is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x18)
 		buffer.writeInt16BE(id)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setEntityProperty(id, propertyType, value) {
+		DeprecationWarning.warn("setEntityProperty", "Client#setEntityProperty is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 7 }).writeUInt8(0x2a)
 		buffer.writeUInt8(id)
 		buffer.writeUInt8(propertyType)
 		buffer.writeUInt32BE(value)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/**
+	 * @deprecated Use extension instead.
+	 */
 	setHotbar(blockId, hotbarIndex) {
+		DeprecationWarning.warn("setHotbar", "Client#setHotbar is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2d)
 		buffer.writeUInt8(blockId)
 		buffer.writeUInt8(hotbarIndex)
@@ -295,8 +356,10 @@ export class Client extends TypedEmitter {
 	 * @param {number} yaw
 	 * @param {number} pitch
 	 * @param {TeleportBehavior} teleportBehavior
+	 * @deprecated Use extension instead.
 	 */
 	extendedPositionUpdate(id, x, y, z, yaw, pitch, teleportBehavior) {
+		DeprecationWarning.warn("extendedPositionUpdate", "Client#extendedPositionUpdate is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 11 }).writeUInt8(0x36)
 		buffer.writeInt8(id)
 		buffer.writeBuffer(teleportBehavior.toBuffer())
@@ -307,14 +370,8 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
+	/** @deprecated Use the static property using `LevelEnvironment.environmentProperties` instead. */
 	static environmentProperties = ["sidesId", "edgeId", "edgeHeight", "cloudsHeight", "maxFog", "cloudsSpeed", "weatherFade", "useExponentialFog", "sidesOffset"]
-	static defaultPacketSizes = {
-		0x00: 131,
-		0x0d: 66,
-		0x08: 10,
-		0x05: 9,
-		0x47: 1,
-	}
 }
 
 export default Client
