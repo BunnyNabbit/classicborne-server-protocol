@@ -3,7 +3,7 @@ import { SmartBuffer } from "smart-buffer"
 import { BaseExtension } from "../BaseExtension.mjs"
 /** @import { Client } from "../Client.mjs" */
 
-/** I define EnvMapAspect. */
+/** I define SetHotbar. */
 export class SetHotbar extends BaseExtension {
 	/**
 	 * @param {Client} client
