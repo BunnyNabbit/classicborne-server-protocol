@@ -11,8 +11,8 @@ export class PositionUpdate extends BasePacketHandler {
 		super(PositionUpdate.packetId, client)
 	}
 	static packetId = 0x08
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 9
+	/** The size of the packet including the packet ID. */
+	packetSize = 10
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

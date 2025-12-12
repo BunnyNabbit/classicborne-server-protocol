@@ -11,8 +11,8 @@ export class Message extends BasePacketHandler {
 		super(Message.packetId, client)
 	}
 	static packetId = 0x0d
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 65
+	/** The size of the packet including the packet ID. */
+	packetSize = 66
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

@@ -13,8 +13,8 @@ export class Connection extends BasePacketHandler {
 		super(Connection.packetId, client)
 	}
 	static packetId = 0x00
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 130
+	/** The size of the packet including the packet ID. */
+	packetSize = 131
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

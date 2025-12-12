@@ -13,8 +13,8 @@ export class CustomBlockSupportLevel extends BasePacketHandler {
 	static packetId = 0x13
 	/** @type {number?} */
 	supportLevel = null
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 1
+	/** The size of the packet including the packet ID. */
+	packetSize = 2
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

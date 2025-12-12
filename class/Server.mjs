@@ -158,10 +158,10 @@ export class Server extends TypedEmitter {
 		const socket = client.socket
 		if (data) socket.buffer.writeBuffer(data)
 		socket.buffer.readOffset = 0
+		const receivedBufferRemaining = socket.buffer.remaining()
 		const type = socket.buffer.readUInt8()
 		const packetHandler = client.packetHandlers.get(type)
 		if (packetHandler) {
-			const receivedBufferRemaining = socket.buffer.remaining()
 			if (receivedBufferRemaining < packetHandler.packetSize) {
 				socket.buffer.writeOffset = receivedBufferRemaining // we are expecting the buffer to be expanded, so set the writeOffset to end of the buffer
 				if (socket.buffer.remaining() > Server.maximumBufferSize) return socket.destroy()

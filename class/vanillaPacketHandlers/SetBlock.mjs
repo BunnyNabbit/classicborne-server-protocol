@@ -10,8 +10,8 @@ export class SetBlock extends BasePacketHandler {
 		super(SetBlock.packetId, client)
 	}
 	static packetId = 0x05
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 8
+	/** The size of the packet including the packet ID. */
+	packetSize = 9
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

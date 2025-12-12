@@ -12,8 +12,8 @@ export class ProtocolExtensionIdentify extends BasePacketHandler {
 		super(ProtocolExtensionIdentify.packetId, client)
 	}
 	static packetId = 0x10
-	/** The size of the packet excluding the packet ID. */
-	packetSize = 66
+	/** The size of the packet including the packet ID. */
+	packetSize = 67
 	/**
 	 * @param {SmartBuffer} buffer
 	 */

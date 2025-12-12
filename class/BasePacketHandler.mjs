@@ -11,7 +11,7 @@ export class BasePacketHandler {
 		this.packetId = packetId
 		this.client = client
 	}
-	/** The size of the packet excluding the packet ID. */
+	/** The size of the packet including the packet ID. */
 	packetSize = 0
 	/**Handles a given packet by using the socket's buffer.
 	 * 
