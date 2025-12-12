@@ -1,8 +1,21 @@
 # classicborne-server-protocol
+
 [![NPM version](https://img.shields.io/npm/v/classicborne-server-protocol.svg)](http://npmjs.com/package/classicborne-server-protocol)
 
-Minecraft classic server protocol with Classic Protocol Extension support
+Minecraft classic server protocol library with Classic Protocol Extension support.
 
-This is still under early development. Behavior may suddenly change and generally isn't recommended for usage.
+```js
+// Bare minimum server operation
+import { Server } from "classicborne-server-protocol"
+const server = new Server(25565)
 
-"Hmm, would you know I'm not exactly sure what all there is to do."
+const bounds = { x: 512, y: 512, z: 512 }
+const emptyLevelBuffer = server.utils.processLevel(Buffer.alloc(bounds.x * bounds.y * bounds.z), bounds.x, bounds.y, bounds.z)
+
+server.on("clientConnected", async (client, authInfo) => {
+	console.log(emptyLevelBuffer)
+	client.serverIdentification("Empty", "So cool!", 0x00)
+	client.loadLevel(await emptyLevelBuffer, bounds.x, bounds.y, bounds.z, true)
+	client.configureSpawn(0, authInfo.username, 0, 0, 0, 0, 0)
+})
+```
