@@ -167,7 +167,7 @@ export class Server extends TypedEmitter {
 				if (socket.buffer.remaining() > Server.maximumBufferSize) return socket.destroy()
 				return
 			}
-			packetHandler.onPacket(socket.buffer)
+			if (packetHandler.onPacket(socket.buffer) == Server.websocketUpgradeFlag) return
 		} else {
 			return client.disconnect(`Handler ${type} was not found.`)
 		}
@@ -176,6 +176,7 @@ export class Server extends TypedEmitter {
 		if (socket.buffer.remaining()) Server.tcpPacketHandler(client)
 	}
 	static maximumBufferSize = 5000
+	static websocketUpgradeFlag = "upgrade"
 }
 
 export default Server
