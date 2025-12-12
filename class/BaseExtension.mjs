@@ -10,11 +10,6 @@ export class BaseExtension {
 		this.client = client
 		this.version = version
 	}
-
-	/**The packet IDs that the extension ????
-	 * @type {number[]}
-	 */
-	static packetIds = []
 	/**The extension versions this implementation supports.
 	 * @type {number[]}
 	 */
