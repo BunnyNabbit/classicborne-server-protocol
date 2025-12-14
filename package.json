@@ -19,13 +19,13 @@
   "dependencies": {
     "smart-buffer": "^4.2.0",
     "tiny-typed-emitter": "^2.1.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/node": "^24.8.1",
-    "prettier": "^3.6.2",
+    "@types/node": "^24.10.3",
+    "prettier": "^3.7.4",
     "prettier-plugin-drone-class": "^0.1.0",
-    "typedoc": "^0.28.13",
-    "typescript": "^5.9.2"
+    "typedoc": "^0.28.15",
+    "typescript": "^5.9.3"
   }
 }
