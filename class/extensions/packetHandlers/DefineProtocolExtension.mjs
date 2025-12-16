@@ -13,6 +13,7 @@ import { FullCodePage437 } from "../FullCodePage437.mjs"
 import { HeldBlock } from "../HeldBlock.mjs"
 import { InventoryOrder } from "../InventoryOrder.mjs"
 import { LevelEnvironment } from "../LevelEnvironment.mjs"
+import { SelectionCuboid } from "../SelectionCuboid.mjs"
 import { SetHotbar } from "../SetHotbar.mjs"
 /** @import { SmartBuffer } from "smart-buffer" */
 /** @import { Client } from "../../Client.mjs" */
@@ -75,6 +76,9 @@ export class DefineProtocolExtension extends BasePacketHandler {
 				break
 			case "EnvMapAspect":
 				this.client.extensions.set("LevelEnvironment", new LevelEnvironment(this.client, extension.version))
+				break
+			case "SelectionCuboid":
+				this.client.extensions.set("SelectionCuboid", new SelectionCuboid(this.client, extension.version))
 				break
 			case "SetHotbar":
 				this.client.extensions.set("SetHotbar", new SetHotbar(this.client, extension.version))

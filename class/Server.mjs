@@ -60,6 +60,10 @@ const extensions = [
 		name: "ExtEntityTeleport",
 		version: 1,
 	},
+	{
+		name: "SelectionCuboid",
+		version: 1,
+	},
 ]
 function isTrustedWebSocketProxy(remoteAddress) {
 	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy
