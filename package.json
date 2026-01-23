@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-docs": "typedoc"
+    "build-docs": "typedoc",
+    "type-check": "tsc"
   },
   "author": "BunnyNabbit \"Aon Langton\"",
   "license": "MIT",
