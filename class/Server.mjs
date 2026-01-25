@@ -65,6 +65,11 @@ const extensions = [
 		version: 1,
 	},
 ]
+/**
+ * Determines whether a remote IP address is a trusted WebSocket proxy.
+ * @param {string} remoteAddress - Remote address string (may be an IPv6-mapped IPv4 address).
+ * @returns {boolean} `true` if the address is the known ClassiCube WebSocket proxy "::ffff:34.223.5.250", `false` otherwise.
+ */
 function isTrustedWebSocketProxy(remoteAddress) {
 	if (remoteAddress == "::ffff:34.223.5.250") return true // ClassiCube's WebSocket proxy
 	return false
