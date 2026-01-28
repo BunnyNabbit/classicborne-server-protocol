@@ -95,7 +95,6 @@ export class Client extends TypedEmitter {
 		while (compressedPayloadBuffer.remaining()) {
 			const remaining = compressedPayloadBuffer.remaining()
 			const dataChunkBuffer = new SmartBuffer({ size: 1028 }).writeUInt8(0x03)
-			const dataChunkBuffer = new SmartBuffer({ size: 1028 }).writeUInt8(3)
 			dataChunkBuffer.writeUInt16BE(Math.min(remaining, 1024))
 			dataChunkBuffer.writeBuffer(compressedPayloadBuffer.readBuffer(Math.min(remaining, 1024)))
 			dataChunkBuffer.writeBuffer(Buffer.alloc(1024 - Math.min(remaining, 1024)))
