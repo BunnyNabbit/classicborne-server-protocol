@@ -6,30 +6,36 @@ import { CodePage437 } from "./CodePage437.mjs"
 import { ExtensionManager } from "./ExtensionManager.mjs"
 import { DeprecationWarning } from "./DeprecationWarning.mjs"
 import { vanillaPacketHandlers } from "./vanillaPacketHandlers/index.mjs"
-/** @import { BasePacketHandler } from "./BasePacketHandler.mjs" */
-/** @import { TeleportBehavior } from "./TeleportBehavior.mjs" */
-/** @import { extension } from "../types.mts" */
-/** @import { Server, SocketImpostor } from "./Server.mjs" */
-/** @import { Socket } from "node:net" */
+/** @import {BasePacketHandler} from "./BasePacketHandler.mjs" */
+/** @import {TeleportBehavior} from "./TeleportBehavior.mjs" */
+/** @import {extension} from "../types.mts" */
+/**@import {
+ *   Server,
+ *   SocketImpostor
+ * } from "./Server.mjs"
+ */
+/** @import {Socket} from "node:net" */
 
-/**I represent a client to act on a Server instance.  
+/**I represent a client to act on a Server instance.\
  * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will destroy me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
- * 
+ *
  * But if authentication succeeds, the server will emit a "clientConnected" event. This by itself won't do much because I still need an implementation of Minecraft Classic. Whoever seeing this can interpret that as they will. It's never argued what makes a Minecraft Classic server. But based on other implementations, it's based on using all available packets, such as chat messages, level downloads and block changes. `classicborne-server-protocol` is intended to be a low-level network library, so it doesn't come with Minecraft-like systems. For a batteries included server software, check out [`classicborne`](https://classicborne.bunnynabbit.com/).
- * 
+ *
  * My socket may be either TCP or WebSocket-based. It will be expected that the network layer used will be whatever. For this reason, I provide {@link Client#address} for getting the socket's address.
- * 
+ *
  * Right now, my packets are handled by the server class. But it is expected that this may change later.
- * @extends {TypedEmitter<{"extensions": (extensions: extension[]) => void; "close": () => void }>}
+ *
+ * @extends {TypedEmitter<{ extensions: (extensions: extension[]) => void; close: () => void }>}
  */
 export class Client extends TypedEmitter {
 	/**Creates a Client instance
-	 * @param {Socket|SocketImpostor} socket - The socket of the client
+	 *
+	 * @param {Socket | SocketImpostor} socket - The socket of the client
 	 * @param {Server} server - The server instance
 	 */
 	constructor(socket, server) {
 		super()
-		/** @type {Socket|SocketImpostor} */
+		/** @type {Socket | SocketImpostor} */
 		this.socket = socket
 		this.server = server
 		this.usingWebSocket = false
@@ -42,9 +48,8 @@ export class Client extends TypedEmitter {
 		this.getChecked = false
 		this.appName = ""
 		this.cpeExtensionsCount = 0
-		/**
+		/**@deprecated Use {@link Client#extensions}.
 		 * @type {extension[]}
-		 * @deprecated Use {@link Client#extensions}.
 		 */
 		this.cpeExtensions
 		/** @type {ExtensionManager} */
@@ -163,17 +168,13 @@ export class Client extends TypedEmitter {
 		this.socket.write(buffer.toBuffer())
 	}
 	// Extensions
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setClickDistance(distance) {
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x12)
 		buffer.writeInt16BE(distance)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	defineBlock(block) {
 		DeprecationWarning.warn("defineBlock", "Client#defineBlock is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 80 }).writeUInt8(0x23)
@@ -195,9 +196,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	defineBlockExt(block) {
 		DeprecationWarning.warn("defineBlockExt", "Client#defineBlockExt is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 88 }).writeUInt8(0x25)
@@ -227,18 +226,14 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(block.fogB ?? 0)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	removeBlockDefinition(blockId) {
 		DeprecationWarning.warn("removeBlockDefinition", "Client#removeBlockDefinition is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x24)
 		buffer.writeUInt8(blockId)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setInventoryOrder(id, order) {
 		DeprecationWarning.warn("setInventoryOrder", "Client#setInventoryOrder is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2c)
@@ -246,26 +241,20 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	customBlockSupport(level) {
 		DeprecationWarning.warn("customBlockSupport", "Client#customBlockSupport is deprecated. Use the extension instead.")
 		const blockSupportBuffer = new SmartBuffer({ size: 2 }).writeUInt8(0x13).writeUInt8(level)
 		this.socket.write(blockSupportBuffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	texturePackUrl(url) {
 		DeprecationWarning.warn("texturePackUrl", "Client#texturePackUrl is deprecated. Use the extension instead.")
 		const texturePackBuffer = new SmartBuffer({ size: 65 }).writeUInt8(0x28)
 		texturePackBuffer.writeBuffer(DataTypes.padString(url))
 		this.socket.write(texturePackBuffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setEnvironmentProperties(environment) {
 		DeprecationWarning.warn("setEnvironmentProperties", "Client#setEnvironmentProperties is deprecated. Use the extension instead.")
 		for (const [key, value] of Object.entries(environment)) {
@@ -278,9 +267,7 @@ export class Client extends TypedEmitter {
 			}
 		}
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setBlockPermission(id, allowPlacement, allowDeletion) {
 		DeprecationWarning.warn("setBlockPermission", "Client#setBlockPermission is deprecated. Use the extension instead.")
 		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
@@ -289,9 +276,7 @@ export class Client extends TypedEmitter {
 		blockPermissionBuffer.writeUInt8(allowDeletion)
 		this.socket.write(blockPermissionBuffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	configureSpawnExt(id, username, x, y, z, yaw, pitch, skin) {
 		DeprecationWarning.warn("configureSpawnExt", "Client#configureSpawnExt is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 138 }).writeUInt8(0x21)
@@ -305,9 +290,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	addPlayerName(id, username, listName, groupName = "", groupOrder = 0) {
 		DeprecationWarning.warn("addPlayerName", "Client#addPlayerName is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 196 }).writeUInt8(0x16)
@@ -318,18 +301,14 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(groupOrder)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	removePlayerName(id) {
 		DeprecationWarning.warn("removePlayerName", "Client#removePlayerName is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x18)
 		buffer.writeInt16BE(id)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setEntityProperty(id, propertyType, value) {
 		DeprecationWarning.warn("setEntityProperty", "Client#setEntityProperty is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 7 }).writeUInt8(0x2a)
@@ -338,9 +317,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt32BE(value)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
-	 * @deprecated Use extension instead.
-	 */
+	/** @deprecated Use extension instead. */
 	setHotbar(blockId, hotbarIndex) {
 		DeprecationWarning.warn("setHotbar", "Client#setHotbar is deprecated. Use the extension instead.")
 		const buffer = new SmartBuffer({ size: 3 }).writeUInt8(0x2d)
@@ -348,7 +325,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(hotbarIndex)
 		this.socket.write(buffer.toBuffer())
 	}
-	/**
+	/**@deprecated Use extension instead.
 	 * @param {number} id
 	 * @param {number} x
 	 * @param {number} y
@@ -356,7 +333,6 @@ export class Client extends TypedEmitter {
 	 * @param {number} yaw
 	 * @param {number} pitch
 	 * @param {TeleportBehavior} teleportBehavior
-	 * @deprecated Use extension instead.
 	 */
 	extendedPositionUpdate(id, x, y, z, yaw, pitch, teleportBehavior) {
 		DeprecationWarning.warn("extendedPositionUpdate", "Client#extendedPositionUpdate is deprecated. Use the extension instead.")

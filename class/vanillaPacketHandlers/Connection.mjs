@@ -3,21 +3,17 @@ import { DataTypes } from "../DataTypes.mjs"
 import { SmartBuffer } from "smart-buffer"
 import { CpeBase } from "../extensions/CpeBase.mjs"
 
-/** @import { Client } from "../Client.mjs" */
-/**I handle connections coming from the client.*/
+/** @import {Client} from "../Client.mjs" */
+/** I handle connections coming from the client. */
 export class Connection extends BasePacketHandler {
-	/**
-	 * @param {Client} client
-	 */
+	/** @param {Client} client */
 	constructor(client) {
 		super(Connection.packetId, client)
 	}
 	static packetId = 0x00
 	/** The size of the packet including the packet ID. */
 	packetSize = 131
-	/**
-	 * @param {SmartBuffer} buffer
-	 */
+	/** @param {SmartBuffer} buffer */
 	onPacket(buffer) {
 		const client = this.client
 		const socket = client.socket

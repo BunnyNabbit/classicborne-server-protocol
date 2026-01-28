@@ -14,22 +14,18 @@ import { HeldBlock } from "../HeldBlock.mjs"
 import { InventoryOrder } from "../InventoryOrder.mjs"
 import { LevelEnvironment } from "../LevelEnvironment.mjs"
 import { SetHotbar } from "../SetHotbar.mjs"
-/** @import { SmartBuffer } from "smart-buffer" */
-/** @import { Client } from "../../Client.mjs" */
-/**I handle CPE extension definition packets from the client.*/
+/** @import {SmartBuffer} from "smart-buffer" */
+/** @import {Client} from "../../Client.mjs" */
+/** I handle CPE extension definition packets from the client. */
 export class DefineProtocolExtension extends BasePacketHandler {
-	/**
-	 * @param {Client} client
-	 */
+	/** @param {Client} client */
 	constructor(client) {
 		super(DefineProtocolExtension.packetId, client)
 	}
 	static packetId = 0x11
 	/** The size of the packet including the packet ID. */
 	packetSize = 69
-	/**
-	 * @param {SmartBuffer} buffer
-	 */
+	/** @param {SmartBuffer} buffer */
 	onPacket(buffer) {
 		const socket = this.client.socket
 		if (this.client.authed) return socket.destroy()

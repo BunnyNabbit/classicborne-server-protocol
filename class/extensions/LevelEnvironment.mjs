@@ -2,12 +2,11 @@
 import { SmartBuffer } from "smart-buffer"
 import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define EnvMapAspect. */
 export class LevelEnvironment extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {

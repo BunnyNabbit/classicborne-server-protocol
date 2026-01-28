@@ -1,19 +1,17 @@
 // @ts-check
 import { SmartBuffer } from "smart-buffer"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define EntityProperty. */
 export class EntityProperty extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
 		super(client, version)
 	}
-	/**
-	 * @param {number} id
+	/**@param {number} id
 	 * @param {number} propertyType
 	 * @param {number} value
 	 */

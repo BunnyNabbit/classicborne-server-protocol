@@ -1,9 +1,8 @@
 // @ts-check
-/** @import { Client } from "./Client.mjs" */
+/** @import {Client} from "./Client.mjs" */
 
 export class BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version - The extension version.
 	 */
 	constructor(client, version) {
@@ -11,6 +10,7 @@ export class BaseExtension {
 		this.version = version
 	}
 	/**The extension versions this implementation supports.
+	 *
 	 * @type {number[]}
 	 */
 	static supportedVersions = []

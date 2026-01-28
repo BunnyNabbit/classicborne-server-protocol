@@ -1,20 +1,18 @@
 // @ts-check
 import { SmartBuffer } from "smart-buffer"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define SetHotbar. */
 export class SetHotbar extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
 		super(client, version)
 	}
 	static setHotbarPacketIdentifier = 0x2d
-	/**
-	 * @param {number} blockId
+	/**@param {number} blockId
 	 * @param {number} hotbarIndex
 	 */
 	setHotbar(blockId, hotbarIndex) {

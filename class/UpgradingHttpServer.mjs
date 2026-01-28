@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws"
 import http from "node:http"
 
 export class UpgradingHttpServer {
-	/** */
+	/**/
 	constructor() {
 		this.webSocketServer = new WebSocketServer({ noServer: true })
 		this.webSocketServer.on("connection", function connection(ws, req) {
