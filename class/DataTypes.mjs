@@ -2,17 +2,20 @@
 import { SmartBuffer } from "smart-buffer"
 import { CodePage437 } from "./CodePage437.mjs"
 /**Namespace for data type handling
+ *
  * @namespace
  */
 export class DataTypes {
 	/**@todo Yet to be documented.
-	 * @param {SmartBuffer} buffer 
+	 *
+	 * @param {SmartBuffer} buffer
 	 */
 	static readString(buffer) {
 		return CodePage437.from(buffer.readBuffer(64)).trim()
 	}
 	/**@todo Yet to be documented.
-	 * @param {SmartBuffer} buffer 
+	 *
+	 * @param {SmartBuffer} buffer
 	 */
 	static readFixedShort(buffer) {
 		const data = buffer.readUInt16BE()
@@ -23,7 +26,8 @@ export class DataTypes {
 		}
 	}
 	/**@todo Yet to be documented.
-	 * @param {number} number 
+	 *
+	 * @param {number} number
 	 */
 	static fixedShort(number) {
 		let multipliedValue = Math.round(number * 32)
@@ -32,7 +36,8 @@ export class DataTypes {
 		return bitwiseResult
 	}
 	/**@todo Yet to be documented.
-	 * @param {string} string 
+	 *
+	 * @param {string} string
 	 * @returns {Buffer}
 	 */
 	static padString(string) {

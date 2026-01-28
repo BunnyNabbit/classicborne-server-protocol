@@ -2,21 +2,18 @@
 import { SmartBuffer } from "smart-buffer"
 import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define BlockDefinitionsExt. */
 export class BlockDefinitionsExtended extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
 		super(client, version)
 	}
 	static defineBlockPacketIdentifier = 0x25
-	/**
-	 * @param {{ id: number; name: string; collision: number; speed: number; topTexture: number; leftTexture: number; rightTexture: number; frontTexture: number; backTexture: number; bottomTexture: number; transmitLight: number; walkSound: number; fullBright: number; minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number; draw: number; fogDensity: number; fogR: number; fogG: number; fogB: number; }} block
-	 */
+	/** @param {{ id: number; name: string; collision: number; speed: number; topTexture: number; leftTexture: number; rightTexture: number; frontTexture: number; backTexture: number; bottomTexture: number; transmitLight: number; walkSound: number; fullBright: number; minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number; draw: number; fogDensity: number; fogR: number; fogG: number; fogB: number }} block */
 	defineBlock(block) {
 		const buffer = new SmartBuffer({ size: 88 }).writeUInt8(BlockDefinitionsExtended.defineBlockPacketIdentifier)
 		buffer.writeUInt8(block.id)

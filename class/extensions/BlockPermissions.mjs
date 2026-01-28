@@ -1,20 +1,18 @@
 // @ts-check
 import { SmartBuffer } from "smart-buffer"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define BlockPermissions. */
 export class BlockPermissions extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
 		super(client, version)
 	}
 	static setBlockPermissionPacketIdentifier = 0x1c
-	/**
-	 * @param {number} id
+	/**@param {number} id
 	 * @param {number} allowPlacement
 	 * @param {number} allowDeletion
 	 */

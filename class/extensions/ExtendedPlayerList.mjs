@@ -2,12 +2,11 @@
 import { SmartBuffer } from "smart-buffer"
 import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define ExtPlayerList. */
 export class ExtendedPlayerList extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
@@ -17,6 +16,7 @@ export class ExtendedPlayerList extends BaseExtension {
 	static addPlayerNamePacketIdentifier = 0x16
 	static removePlayerNamePacketIdentifier = 0x18
 	/**@todo Yet to be documented.
+	 *
 	 * @param {number} id
 	 * @param {string} username
 	 * @param {string} listName
@@ -31,6 +31,7 @@ export class ExtendedPlayerList extends BaseExtension {
 		this.client.socket.write(buffer.toBuffer())
 	}
 	/**@todo Yet to be documented.
+	 *
 	 * @param {number} id
 	 */
 	removePlayerName(id) {
@@ -39,6 +40,7 @@ export class ExtendedPlayerList extends BaseExtension {
 		this.client.socket.write(buffer.toBuffer())
 	}
 	/**@todo Yet to be documented.
+	 *
 	 * @param {number} id
 	 * @param {string} username
 	 * @param {number} x

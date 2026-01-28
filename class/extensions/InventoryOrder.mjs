@@ -1,20 +1,18 @@
 // @ts-check
 import { SmartBuffer } from "smart-buffer"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 import { BaseExtension } from "../BaseExtension.mjs"
 
 /** I define InventoryOrder. */
 export class InventoryOrder extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
 		super(client, version)
 	}
-	/**
-	 * @param {number} id
+	/**@param {number} id
 	 * @param {number} order
 	 */
 	setInventoryOrder(id, order) {

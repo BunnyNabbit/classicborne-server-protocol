@@ -2,12 +2,11 @@
 import { SmartBuffer } from "smart-buffer"
 import { CustomBlockSupportLevel } from "./packetHandlers/CustomBlockSupportLevel.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
-/** @import { Client } from "../Client.mjs" */
+/** @import {Client} from "../Client.mjs" */
 
 /** I define CustomBlocks. */
 export class CustomBlocks extends BaseExtension {
-	/**
-	 * @param {Client} client
+	/**@param {Client} client
 	 * @param {number} version
 	 */
 	constructor(client, version) {
@@ -15,6 +14,7 @@ export class CustomBlocks extends BaseExtension {
 		client.packetHandlers.set(CustomBlockSupportLevel.packetId, new CustomBlockSupportLevel(client))
 	}
 	/**Sends CustomBlocks support level.
+	 *
 	 * @param {number} supportLevel
 	 */
 	sendSupportLevel(supportLevel) {

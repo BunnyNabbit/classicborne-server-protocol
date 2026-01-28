@@ -1,14 +1,15 @@
 import { SmartBuffer } from "smart-buffer"
 
 export class TeleportBehavior {
-	/** */
+	/**/
 	constructor() {
 		this.æffectsPosition = false
 		this.æffectsOrientation = false
 		this.interpolatesOrientation = false
 		this.moveMode = TeleportBehavior.moveMode.absoluteInstant
 	}
-	/** Set move mode of teleport behavior.
+	/**Set move mode of teleport behavior.
+	 *
 	 * @param {number} mode - The move mode. See {@link moveMode}.
 	 * @returns {TeleportBehavior}
 	 */

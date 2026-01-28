@@ -4,7 +4,7 @@ import { TypedEmitter } from "tiny-typed-emitter"
 import * as utils from "../utils.mjs"
 import { Client } from "./Client.mjs"
 import { DataTypes } from "./DataTypes.mjs"
-/** @import { extension } from "../types.mts" */
+/** @import {extension} from "../types.mts" */
 
 /** @type {extension[]} */
 const extensions = [
@@ -68,6 +68,7 @@ function isTrustedWebSocketProxy(remoteAddress) {
 /** Impostor for WebSocket to make it compatible with the TCP server. */
 export class SocketImpostor extends TypedEmitter {
 	/**Creates a new SocketImpostor instance.
+	 *
 	 * @param {WebSocket} websocket - The WebSocket to wrap.
 	 */
 	constructor(websocket) {
@@ -81,6 +82,7 @@ export class SocketImpostor extends TypedEmitter {
 	/** @type {Client} */
 	client = null
 	/**Writes data to the WebSocket.
+	 *
 	 * @param {Buffer} buffer - The buffer to write.
 	 */
 	write(buffer) {
@@ -96,10 +98,12 @@ export class SocketImpostor extends TypedEmitter {
 	}
 }
 /**Represents a Minecraft Classic server.
- * @extends {TypedEmitter<{"clientConnected": (player: Client, authInfo: {username: string, key: string, extensions: extension[]?}) => void}>}
+ *
+ * @extends {TypedEmitter<{ clientConnected: (player: Client, authInfo: { username: string; key: string; extensions: extension[]? }) => void }>}
  */
 export class Server extends TypedEmitter {
 	/**Creates a new Server instance.
+	 *
 	 * @param {number} [port] The port to listen on. Defaults to 25565.
 	 * @param {string} [host] The host to listen on. Defaults to all interfaces.
 	 */
@@ -142,6 +146,7 @@ export class Server extends TypedEmitter {
 		this.connectionTimeout = 30 * 1000
 	}
 	/**Sets up a WebSocket server and allow WebSocket connections under the same port.
+	 *
 	 * @returns {Promise<UpgradingHttpServer>} The UpgradingHttpServer instance.
 	 */
 	async setupWebSocketServer() {
@@ -150,6 +155,7 @@ export class Server extends TypedEmitter {
 		return this.httpServer
 	}
 	/**Handles incoming packets from the client.
+	 *
 	 * @param {Client} client - A client instance.
 	 * @param {Buffer} [data] - The data received from the client.
 	 * @returns

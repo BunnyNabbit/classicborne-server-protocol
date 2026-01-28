@@ -54,7 +54,7 @@ const wanderOffsets = [
 ]
 const gravity = [0, -1, 0]
 class Monster {
-	/** */
+	/**/
 	constructor(client) {
 		this.client = client
 		this.randomizePosition()
