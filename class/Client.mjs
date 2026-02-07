@@ -17,7 +17,7 @@ import { vanillaPacketHandlers } from "./vanillaPacketHandlers/index.mjs"
 /** @import {Socket} from "node:net" */
 
 /**I represent a client to act on a Server instance.\
- * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will destroy me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
+ * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will {@link Client#disconnect | destroy} me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
  *
  * But if authentication succeeds, the server will emit a "clientConnected" event. This by itself won't do much because I still need an implementation of Minecraft Classic. Whoever seeing this can interpret that as they will. It's never argued what makes a Minecraft Classic server. But based on other implementations, it's based on using all available packets, such as chat messages, level downloads and block changes. *classicborne-server-protocol* is intended to be a low-level network library, so it doesn't come with Minecraft-like systems. For a batteries included server software, check out [*classicborne*](https://classicborne.bunnynabbit.com/).
  *
@@ -61,7 +61,7 @@ export class Client extends TypedEmitter {
 			this.packetHandlers.set(handler.packetId, handler)
 		})
 	}
-
+	/** @todo Yet to be documented. */
 	message(message, messageType = -1, continueAdornment = ">") {
 		const cp437Buffer = SmartBuffer.fromBuffer(CodePage437.to(message))
 		const continueAdornmentBuffer = CodePage437.to(continueAdornment)
@@ -76,7 +76,7 @@ export class Client extends TypedEmitter {
 			writeContinueAdornment = true
 		}
 	}
-
+	/** @todo Yet to be documented. */
 	async loadLevel(data, x, y, z, processed = false, callback, preFinalize) {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
@@ -109,13 +109,13 @@ export class Client extends TypedEmitter {
 		this.socket.write(finalizeBuffer.toBuffer())
 		if (callback) callback()
 	}
-
+	/** @todo Yet to be documented. */
 	disconnect(message) {
 		const buffer = new SmartBuffer({ size: 65 }).writeUInt8(0x0e).writeBuffer(CodePage437.to(message))
 		buffer.writeString(" ".repeat(65 - buffer.writeOffset))
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	configureSpawn(id, username, x, y, z, yaw, pitch) {
 		const buffer = new SmartBuffer({ size: 74 }).writeUInt8(0x07)
 		buffer.writeInt8(id)
@@ -127,7 +127,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	serverIdentification(serverName, motd, userType) {
 		const buffer = new SmartBuffer({ size: 131 }).writeUInt8(0x00).writeUInt8(0x07)
 		buffer.writeBuffer(DataTypes.padString(serverName))
@@ -135,7 +135,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(userType)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	setBlock(type, x, y, z) {
 		const buffer = new SmartBuffer({ size: 8 }).writeUInt8(0x06)
 		buffer.writeUInt16BE(x)
@@ -144,7 +144,7 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(type)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	absolutePositionUpdate(id, x, y, z, yaw, pitch) {
 		const buffer = new SmartBuffer({ size: 10 }).writeUInt8(0x08)
 		buffer.writeInt8(id)
@@ -155,13 +155,13 @@ export class Client extends TypedEmitter {
 		buffer.writeUInt8(pitch)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	despawnPlayer(id) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0c)
 		buffer.writeInt8(id)
 		this.socket.write(buffer.toBuffer())
 	}
-
+	/** @todo Yet to be documented. */
 	updateUserType(userType) {
 		const buffer = new SmartBuffer({ size: 2 }).writeUInt8(0x0f)
 		buffer.writeInt8(userType)

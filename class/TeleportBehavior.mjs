@@ -17,22 +17,22 @@ export class TeleportBehavior {
 		this.moveMode = mode
 		return this
 	}
-
+	/** @todo Yet to be documented. */
 	setAffectsPosition(affects = true) {
 		this.æffectsPosition = affects
 		return this
 	}
-
+	/** @todo Yet to be documented. */
 	setAffectsOrientation(affects = true) {
 		this.æffectsOrientation = affects
 		return this
 	}
-
+	/** @todo Yet to be documented. */
 	setInterpolatesOrientation(interpolates = true) {
 		this.interpolatesOrientation = interpolates
 		return this
 	}
-
+	/** @todo Yet to be documented. */
 	toBuffer() {
 		const buffer = new SmartBuffer({ size: 1 })
 		let byte = 0
@@ -45,13 +45,13 @@ export class TeleportBehavior {
 	}
 
 	static moveMode = {
-		/** Instantly move to position wizh no interpolation. */
+		/** Instantly move to position with no interpolation. */
 		absoluteInstant: 0,
-		/** Move to position wizh interpolation. */
+		/** Move to position with interpolation. */
 		absoluteSmooth: 1,
-		/** Move relative to position wizh interpolation. */
+		/** Move relative to position with interpolation. */
 		relativeSmooth: 2,
-		/** Instantly move relative to position wizh no interpolation. */
+		/** Instantly move relative to position with no interpolation. */
 		relativeInstant: 3,
 	}
 }

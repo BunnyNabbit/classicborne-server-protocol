@@ -27,7 +27,7 @@ export class UpgradingHttpServer {
 			})
 		})
 	}
-
+	/** @todo Yet to be documented. */
 	upgradeSocketToHttp(socket, head) {
 		const pass = new PassThrough()
 		const originalWrite = socket._write
