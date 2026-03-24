@@ -4,7 +4,10 @@ import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
 /** @import {Client} from "../Client.mjs" */
 
-/** I define ExtPlayerList. */
+/**I define ExtPlayerList. I'm an extension which separates entities and the player list apart.
+ *
+ * If I am accepted as an extension, {@link Client.configureSpawn} shouldn't be called. Instead, use my {@link configureSpawn} method.
+ */
 export class ExtendedPlayerList extends BaseExtension {
 	/**@param {Client} client
 	 * @param {number} version
@@ -15,11 +18,13 @@ export class ExtendedPlayerList extends BaseExtension {
 
 	static addPlayerNamePacketIdentifier = 0x16
 	static removePlayerNamePacketIdentifier = 0x18
-	/**@todo Yet to be documented.
+	/**Adds a player name to the player list. Updates entries if {@link id} is already defined.
 	 *
-	 * @param {number} id
-	 * @param {string} username
-	 * @param {string} listName
+	 * @param {number} id - The identifier for the player list entry. Does not need to match with an entity's ID.in a level.
+	 * @param {string} username - The name used for tab completions.
+	 * @param {string} listName - The name to display on the player list.
+	 * @param {string} [groupName=""] - The name of the entry's group. Default is `""`
+	 * @param {number} [groupOrder=0] - The order of the entry's group. Default is `0`
 	 */
 	addPlayerName(id, username, listName, groupName = "", groupOrder = 0) {
 		const buffer = new SmartBuffer({ size: 196 }).writeUInt8(ExtendedPlayerList.addPlayerNamePacketIdentifier)
@@ -30,7 +35,7 @@ export class ExtendedPlayerList extends BaseExtension {
 		buffer.writeUInt8(groupOrder)
 		this.client.socket.write(buffer.toBuffer())
 	}
-	/**@todo Yet to be documented.
+	/**Removes an entry from the player list by its {@link id}.
 	 *
 	 * @param {number} id
 	 */
@@ -39,7 +44,7 @@ export class ExtendedPlayerList extends BaseExtension {
 		buffer.writeInt16BE(id)
 		this.client.socket.write(buffer.toBuffer())
 	}
-	/**@todo Yet to be documented.
+	/**Creates an entity. Different from {@link Client.configureSpawn} as this method requires a string for a skin.
 	 *
 	 * @param {number} id
 	 * @param {string} username
@@ -48,7 +53,7 @@ export class ExtendedPlayerList extends BaseExtension {
 	 * @param {number} z
 	 * @param {number} yaw
 	 * @param {number} pitch
-	 * @param {string} skin
+	 * @param {string} skin - The skin to use for the entity model. Clients may interpret this differently. It's typical for this to accept usernames or URLs.
 	 */
 	configureSpawn(id, username, x, y, z, yaw, pitch, skin) {
 		const buffer = new SmartBuffer({ size: 138 }).writeUInt8(33)
