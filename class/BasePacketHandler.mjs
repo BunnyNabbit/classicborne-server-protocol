@@ -19,6 +19,7 @@ export class BasePacketHandler {
 	 * @abstract
 	 * @param {SmartBuffer} buffer
 	 */
+	// eslint-disable-next-line no-unused-vars
 	onPacket(buffer) {
 		throw new Error(`onPacket is an abstract method of ${this.constructor.name} and must be implemented.`)
 	}
