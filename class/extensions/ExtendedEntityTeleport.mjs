@@ -2,7 +2,7 @@
 import { SmartBuffer } from "smart-buffer"
 import { DataTypes } from "../DataTypes.mjs"
 import { BaseExtension } from "../BaseExtension.mjs"
-import { TeleportBehavior } from "../TeleportBehavior.mjs"
+/** @import {TeleportBehavior} from "../TeleportBehavior.mjs" */
 /** @import {Client} from "../Client.mjs" */
 
 /** I define ExtEntityTeleport. */

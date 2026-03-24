@@ -1,5 +1,5 @@
 // @ts-check
-import { Client } from "./Client.mjs"
+/** @import {Client} from "./Client.mjs" */
 /** @import {SmartBuffer} from "smart-buffer" */
 /** I handle protocol packets coming from a client. I am often applied to clients via protocol extensions, but I am also used as the basis for handling Classic protocol packets. When I handle a packet, I typically emit an event on my client. */
 export class BasePacketHandler {

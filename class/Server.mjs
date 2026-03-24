@@ -3,7 +3,6 @@ import { SmartBuffer } from "smart-buffer"
 import { TypedEmitter } from "tiny-typed-emitter"
 import * as utils from "../utils.mjs"
 import { Client } from "./Client.mjs"
-import { DataTypes } from "./DataTypes.mjs"
 /** @import {extension} from "../types.mts" */
 
 /** @type {extension[]} */
