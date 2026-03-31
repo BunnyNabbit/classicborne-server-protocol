@@ -81,16 +81,12 @@ export class Client extends TypedEmitter {
 		const initializeBuffer = new SmartBuffer({ size: 1 }).writeUInt8(0x02)
 		this.socket.write(initializeBuffer.toBuffer())
 
-		let compressedPayloadBuffer = new Promise(async (resolve) => {
-			let compressedPayloadBuffer = null
-			if (processed) {
-				compressedPayloadBuffer = SmartBuffer.fromBuffer(data)
-				resolve(compressedPayloadBuffer)
-			} else {
-				resolve(SmartBuffer.fromBuffer(await utils.processLevel(data, x, y, z)))
-			}
-		})
-		compressedPayloadBuffer = await compressedPayloadBuffer
+		let compressedPayloadBuffer
+		if (processed) {
+			compressedPayloadBuffer = SmartBuffer.fromBuffer(data)
+		} else {
+			compressedPayloadBuffer = SmartBuffer.fromBuffer(await utils.processLevel(data, x, y, z))
+		}
 
 		while (compressedPayloadBuffer.remaining()) {
 			const remaining = compressedPayloadBuffer.remaining()

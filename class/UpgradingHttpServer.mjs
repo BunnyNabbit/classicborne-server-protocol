@@ -37,7 +37,7 @@ export class UpgradingHttpServer {
 		socket._read = pass._read
 		socket._transform = pass._transform
 		this.httpServer.emit("connection", socket)
-		socket.once("data", (data) => {
+		socket.once("data", () => {
 			// ??????? no no it doesnt bozher me it doesnt bozher me. it bozhers me it bozhers me a lot
 			socket._write = originalWrite
 			socket._read = originalRead
