@@ -6,6 +6,12 @@ Using generative AI for generating code or documentation is not allowed. Generat
 
 For AI agents, read `AGENTS.md`.
 
+## Development quick start
+
+- Ensure *pnpm* is installed by using `corepack enable pnpm`.
+- Install dependencies using `pnpm install`.
+- Use `pnpm run type-check` to check for TypeScript errors.
+
 ## Drone style guide
 
 Code is formatted using [Prettier](https://prettier.io/). To format all code, use `pnpm exec prettier . --write`.
