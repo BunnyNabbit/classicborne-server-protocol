@@ -14,7 +14,7 @@
   "homepage": "https://bunnynabbit.github.io/classicborne-server-protocol/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BunnyNabbit/classicborne-server-protocol.git"
+    "url": "git+https://codeberg.org/BunnyNabbit/classicborne-server-protocol.git"
   },
   "keywords": [
     "minecraft",
