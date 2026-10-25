@@ -19,7 +19,7 @@ import { vanillaPacketHandlers } from "./vanillaPacketHandlers/index.mjs"
 /**I represent a client to act on a Server instance.\
  * Server initializes me on any connection attempt, so I may not be a valid Minecraft Classic client. If my socket doesn't respond back regarding authentication, the Server will {@link Client#disconnect | destroy} me and send my socket a kick message, assuming my socket is a Classic client. Otherwise the kick message text is somewhat readable.
  *
- * But if authentication succeeds, the server will emit a "clientConnected" event. This by itself won't do much because I still need an implementation of Minecraft Classic. Whoever seeing this can interpret that as they will. It's never argued what makes a Minecraft Classic server. But based on other implementations, it's based on using all available packets, such as chat messages, level downloads and block changes. *classicborne-server-protocol* is intended to be a low-level network library, so it doesn't come with Minecraft-like systems. For a batteries included server software, check out [*classicborne*](https://classicborne.bunnynabbit.com/).
+ * But if authentication succeeds, the server will emit a "clientConnected" event. This by itself won't do much because I still need an implementation of Minecraft Classic. Whoever seeing this can interpret that as they will. It's never argued what makes a Minecraft Classic server. But based on other implementations, it's based on using all available packets, such as chat messages, level downloads and block changes. _classicborne-server-protocol_ is intended to be a low-level network library, so it doesn't come with Minecraft-like systems. For a batteries included server software, check out [_classicborne_](https://classicborne.bunnynabbit.com/).
  *
  * My socket may be either TCP or WebSocket-based. It will be expected that the network layer used will be whatever. For this reason, I provide {@link Client#address} for getting the socket's address.
  *
@@ -62,13 +62,13 @@ export class Client extends TypedEmitter {
 		})
 	}
 	/**Shows a chat message.
+	 *
 	 * @todo What range of numbers is considered a system message vs player messages?
 	 *
 	 * @param {string} message - The message to send.
-	 * @param {number} [messageType=-1] - The message type or player network identifier.
-	 * @param {string} [continueAdornment=">"] - The message continuation indicator to prefix on overflowing message lines.
+	 * @param {number} [messageType=-1] - The message type or player network identifier. Default is `-1`
+	 * @param {string} [continueAdornment=">"] - The message continuation indicator to prefix on overflowing message lines. Default is `">"`
 	 * @throws {Error} {@link continueAdornment | Continue adornment} must not be over 63 characters long.
-	 *
 	 */
 	message(message, messageType = -1, continueAdornment = ">") {
 		const cp437Buffer = SmartBuffer.fromBuffer(CodePage437.to(message))
@@ -274,7 +274,7 @@ export class Client extends TypedEmitter {
 	/** @deprecated Use extension instead. */
 	setBlockPermission(id, allowPlacement, allowDeletion) {
 		DeprecationWarning.warn("setBlockPermission", "Client#setBlockPermission is deprecated. Use the extension instead.")
-		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1C)
+		const blockPermissionBuffer = new SmartBuffer({ size: 4 }).writeUInt8(0x1c)
 		blockPermissionBuffer.writeUInt8(id)
 		blockPermissionBuffer.writeUInt8(allowPlacement)
 		blockPermissionBuffer.writeUInt8(allowDeletion)
