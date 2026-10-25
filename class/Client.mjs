@@ -61,7 +61,15 @@ export class Client extends TypedEmitter {
 			this.packetHandlers.set(handler.packetId, handler)
 		})
 	}
-	/** @todo Yet to be documented. */
+	/**Shows a chat message.
+	 * @todo What range of numbers is considered a system message vs player messages?
+	 *
+	 * @param {string} message - The message to send.
+	 * @param {number} [messageType=-1] - The message type or player network identifier.
+	 * @param {string} [continueAdornment=">"] - The message continuation indicator to prefix on overflowing message lines.
+	 * @throws {Error} {@link continueAdornment | Continue adornment} must not be over 63 characters long.
+	 *
+	 */
 	message(message, messageType = -1, continueAdornment = ">") {
 		const cp437Buffer = SmartBuffer.fromBuffer(CodePage437.to(message))
 		const continueAdornmentBuffer = CodePage437.to(continueAdornment)
