@@ -10,6 +10,7 @@ import { FullCodePage437 } from "./FullCodePage437.mjs"
 import { HeldBlock } from "./HeldBlock.mjs"
 import { InventoryOrder } from "./InventoryOrder.mjs"
 import { LevelEnvironment } from "./LevelEnvironment.mjs"
+import { SelectionCuboid } from "./SelectionCuboid.mjs"
 import { SetHotbar } from "./SetHotbar.mjs"
 
 export type defaultExtensions = {
@@ -25,5 +26,26 @@ export type defaultExtensions = {
 	HeldBlock: HeldBlock
 	InventoryOrder: InventoryOrder
 	LevelEnvironment: LevelEnvironment
+	SelectionCuboid: SelectionCuboid
 	SetHotbar: SetHotbar
+}
+
+export interface selection {
+	/** A byte. */
+	id: number
+	name?: string
+	startX: number
+	startY: number
+	startZ: number
+	endX: number
+	endY: number
+	endZ: number
+	/** A color component of 0 to 255. */
+	red?: number
+	/** A color component of 0 to 255. */
+	green?: number
+	/** A color component of 0 to 255. */
+	blue?: number
+	/** The opacity from 0 to 255. 255 is fully opaque. */
+	opacity?: number
 }
